@@ -6,7 +6,6 @@ public class SuperTrump {
     static User currentUser;
     public static void main(String[] args) {
         currentUser = new User();
-        String currentUserName = currentUser.getUserName();
 
     }
     public static void newGame(int noPlayers)  {
