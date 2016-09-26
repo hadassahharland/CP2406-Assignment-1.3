@@ -1,5 +1,6 @@
 package src;
 
+import javax.lang.model.element.Element;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,7 +9,12 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+
+import static jdk.nashorn.internal.objects.ArrayBufferView.length;
 
 /**
  * Created by Hadassah Harland on 21/09/2016.
@@ -17,6 +23,7 @@ import java.util.Arrays;
  */
 public class Deck {
     public static Card[] deck;
+    ArrayList<Card> playDeck;
     int NOPLAYCARDS = 54;
     int NOTRUMPCARDS = 6;
     //String[] playCardData;
@@ -25,6 +32,7 @@ public class Deck {
         // for each set of card details in the file, create a card object and store in an array of 60 card objects
         deck = new Card[(NOPLAYCARDS+NOPLAYCARDS)];
         loadfromfile();
+        shuffleDeck();
     }
 
     public void loadfromfile() {
@@ -86,15 +94,27 @@ public class Deck {
             System.out.println("Error: Data file 'trumpCards.txt' cannot be read");
         }
         for (int cardIndex = NOPLAYCARDS; cardIndex < NOPLAYCARDS+NOTRUMPCARDS; cardIndex++)  {
-            int startIndex = cardIndex*LINESPERTRUMPCARD;
+            int startIndex = (cardIndex-NOPLAYCARDS)*LINESPERTRUMPCARD;
             String[] temp = new String[LINESPERTRUMPCARD];
-            System.arraycopy(playCardData,startIndex,temp,0,LINESPERTRUMPCARD);
+            System.arraycopy(trumpCardData,startIndex,temp,0,LINESPERTRUMPCARD);
             // generate new card using the data from the file
             deck[cardIndex] = new TrumpCard(cardIndex,temp[1],temp[2],temp[3],temp[4]);
             System.out.println(cardIndex + deck[cardIndex].toString());
         }
     }
 
-    // TODO shuffle deck
-    // TODO when card.dealt == true remove from instance of deck
+    public void shuffleDeck()  {
+        // generates a mutable ArrayList containing the elements of deck in a random order
+        ArrayList<Card> arrayList = new ArrayList<>(Arrays.asList(deck));
+        Collections.shuffle(arrayList);
+        this.playDeck = arrayList;
+    }
+
+    public void removeCard(int cardIndex)  {
+        for (int i = 0; i < length(playDeck); i++)  {
+            if (playDeck.get(i).cardIndex == cardIndex)  {
+                playDeck.remove(i);
+            }
+        }
+    }
 }

@@ -2,6 +2,7 @@ package src;
 
 /**
  * Created by Hadassah on 25/09/2016.
+ * This class is a child class of the abstract class Card which holds properties of the play cards in class variables.
  */
 public class PlayCard extends Card {
     String chemicalStructure;
@@ -30,6 +31,7 @@ public class PlayCard extends Card {
     }
 
     public String toString()  {
-        return "***Card details***";
+        return name + " (" + chemicalStructure + "): Hardness: " + hardness + ", Specific Gravity: " + specificGravity
+                + ", Crystal Abundance: " + crystalAbundance + ", Economic Value: " + economicValue;
     }
 }
