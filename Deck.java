@@ -67,7 +67,7 @@ public class Deck {
             // generate new card using the data from the file
             deck[cardIndex] = new PlayCard(cardIndex,temp[1],temp[2],temp[3],temp[4],temp[5],temp[6],temp[7],
                     temp[8],temp[9],temp[10],temp[11],temp[12]);
-            System.out.println(cardIndex + deck[cardIndex].toString());
+            //System.out.println(cardIndex + deck[cardIndex].toString());
         }
 
         String path2 = "C:\\Users\\Hadassah\\IdeaProjects\\CP2406-Assignment-1.3\\src\\src\\trumpCards.txt";
@@ -99,7 +99,7 @@ public class Deck {
             System.arraycopy(trumpCardData,startIndex,temp,0,LINESPERTRUMPCARD);
             // generate new card using the data from the file
             deck[cardIndex] = new TrumpCard(cardIndex,temp[1],temp[2],temp[3],temp[4]);
-            System.out.println(cardIndex + deck[cardIndex].toString());
+            //System.out.println(cardIndex + deck[cardIndex].toString());
         }
     }
 

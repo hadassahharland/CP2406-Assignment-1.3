@@ -10,20 +10,18 @@ import java.util.Scanner;
 public class Game {
     protected int noPlayers;
     public static Player[] players;
+    public static PlayerHand[] playerHands;
     int turnNo;
     int currentPlayerIndex;
-    //String currentUserName;
     Card lastCard;
     Deck deck;
 
     public Game(int noPlayers) {
         this.turnNo = 0;
-        //this.currentUserName = currentUser.getUserName();
         this.noPlayers = noPlayers;
         buildPlayersArray();
         assignDealer(players);
-        //buildDeck();
-        // TODO dealCards();
+        buildDeck();
 
         // TODO gameplay
 
@@ -66,11 +64,20 @@ public class Game {
             return new UserControlledPlayer(playerIndex, playerName);
         }
     }
-//
-//    public void buildDeck() {
-//        Deck deck = new Deck();
-//    }
-//
+
+    public void buildDeck() {
+        Deck deck = new Deck();
+    }
+    public void deal()  {
+        playerHands = new PlayerHand[noPlayers];
+
+        for (int cardsDealt = 0; cardsDealt < 8; cardsDealt++)  {
+            for (int playerDealt = 0; playerDealt < noPlayers; playerDealt++)  {
+
+            }
+        }
+    }
+
 //    public void pronounceWinners()  {
 //        System.out.println("***the winners***");
 //    }
