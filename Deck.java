@@ -1,6 +1,5 @@
 package src;
 
-import javax.lang.model.element.Element;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,18 +10,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 
 import static jdk.nashorn.internal.objects.ArrayBufferView.length;
 
 /**
  * Created by Hadassah Harland on 21/09/2016.
- * This class creates a deck object consisting of a random array of 62 card objects for the game
+ * This class creates a cards object consisting of a random array of 62 card objects for the game
  * "Project Mineral: Super Trump"
  */
 public class Deck {
-    public static Card[] deck;
+    public static Card[] cards;
     ArrayList<Card> playDeck;
     int NOPLAYCARDS = 54;
     int NOTRUMPCARDS = 6;
@@ -30,7 +28,7 @@ public class Deck {
 
     public Deck() {
         // for each set of card details in the file, create a card object and store in an array of 60 card objects
-        deck = new Card[(NOPLAYCARDS+NOPLAYCARDS)];
+        cards = new Card[(NOPLAYCARDS+NOTRUMPCARDS)];
         loadfromfile();
         shuffleDeck();
     }
@@ -65,9 +63,9 @@ public class Deck {
             String[] temp = new String[LINESPERPLAYCARD];
             System.arraycopy(playCardData,startIndex,temp,0,LINESPERPLAYCARD);
             // generate new card using the data from the file
-            deck[cardIndex] = new PlayCard(cardIndex,temp[1],temp[2],temp[3],temp[4],temp[5],temp[6],temp[7],
+            cards[cardIndex] = new PlayCard(cardIndex,temp[1],temp[2],temp[3],temp[4],temp[5],temp[6],temp[7],
                     temp[8],temp[9],temp[10],temp[11],temp[12]);
-            //System.out.println(cardIndex + deck[cardIndex].toString());
+            //System.out.println(cardIndex + cards[cardIndex].toString());
         }
 
         String path2 = "C:\\Users\\Hadassah\\IdeaProjects\\CP2406-Assignment-1.3\\src\\src\\trumpCards.txt";
@@ -98,20 +96,20 @@ public class Deck {
             String[] temp = new String[LINESPERTRUMPCARD];
             System.arraycopy(trumpCardData,startIndex,temp,0,LINESPERTRUMPCARD);
             // generate new card using the data from the file
-            deck[cardIndex] = new TrumpCard(cardIndex,temp[1],temp[2],temp[3],temp[4]);
-            //System.out.println(cardIndex + deck[cardIndex].toString());
+            cards[cardIndex] = new TrumpCard(cardIndex,temp[1],temp[2],temp[3],temp[4]);
+            //System.out.println(cardIndex + cards[cardIndex].toString());
         }
     }
 
     public void shuffleDeck()  {
-        // generates a mutable ArrayList containing the elements of deck in a random order
-        ArrayList<Card> arrayList = new ArrayList<>(Arrays.asList(deck));
+        // generates a mutable ArrayList containing the elements of cards in a random order
+        ArrayList<Card> arrayList = new ArrayList<>(Arrays.asList(cards));
         Collections.shuffle(arrayList);
         this.playDeck = arrayList;
     }
 
     public void removeCard(int cardIndex)  {
-        for (int i = 0; i < length(playDeck); i++)  {
+        for (int i = 0; i < playDeck.size(); i++)  {
             if (playDeck.get(i).cardIndex == cardIndex)  {
                 playDeck.remove(i);
             }

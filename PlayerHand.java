@@ -26,21 +26,32 @@ public class PlayerHand {
 
     public void show()  {
         System.out.println("Your hand contains the following cards: ");
-        for (int i = 0; i < length(hand); i++)  {
-            hand.get(i).toString();
+        for (int i = 0; i < hand.size(); i++)  {
+            System.out.println(hand.get(i).toString());
         }
     }
 
     public void removeCard(int cardIndex)  {
-        for (int i = 0; i < length(hand); i++)  {
+        for (int i = 0; i < hand.size(); i++)  {
             if (hand.get(i).cardIndex == cardIndex)  {
                 hand.remove(i);
                 // Win condition is satisfied when the player's hand is empty
-                if (length(hand)==0)  {  this.winCondition = true;  }
+                if (hand.size()==0)  {  this.winCondition = true;  }
             }
+            else  {  System.out.println("The card you tried to remove is not in this player's hand.");  }
         }
     }
 
+    public void removeCard(Card card)  {
+        for (int i = 0; i < hand.size(); i++)  {
+            if (hand.get(i).cardIndex == card.cardIndex)  {
+                hand.remove(i);
+                // Win condition is satisfied when the player's hand is empty
+                if (hand.size()==0)  {  this.winCondition = true;  }
+            }
+            else  {  System.out.println("The card you tried to remove is not in this player's hand.");  }
+        }
+    }
     public void addCard(Card card)  {
         this.hand.add(card);
     }

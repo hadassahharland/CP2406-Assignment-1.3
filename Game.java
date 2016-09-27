@@ -22,6 +22,8 @@ public class Game {
         buildPlayersArray();
         assignDealer(players);
         buildDeck();
+        deal();
+
 
         // TODO gameplay
 
@@ -66,14 +68,20 @@ public class Game {
     }
 
     public void buildDeck() {
-        Deck deck = new Deck();
+        this.deck = new Deck();
     }
+
     public void deal()  {
         playerHands = new PlayerHand[noPlayers];
-
+        // the first card is dealt to the first PlayerHand in the playerHands ArrayList.
         for (int cardsDealt = 0; cardsDealt < 8; cardsDealt++)  {
             for (int playerDealt = 0; playerDealt < noPlayers; playerDealt++)  {
-
+                // initialize PlayerHands with first card
+                if (cardsDealt == 0)  {  playerHands[playerDealt] = new PlayerHand();  }
+                // add the first card in the playDeck to the player's hand
+                playerHands[playerDealt].addCard(deck.playDeck.get(0));
+                // remove this card from the playDeck
+                deck.playDeck.remove(0);
             }
         }
     }
