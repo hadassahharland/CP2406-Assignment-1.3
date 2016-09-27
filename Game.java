@@ -13,22 +13,35 @@ public class Game {
     public static PlayerHand[] playerHands;
     int turnNo;
     int currentPlayerIndex;
+    String[] winners;
     Card lastCard;
     Deck deck;
 
     public Game(int noPlayers) {
+        startGame(noPlayers);
+        playGame();
+        endGame();
+    }
+
+    public void startGame(int noPlayers)  {
         this.turnNo = 0;
         this.noPlayers = noPlayers;
+        this.winners = new String[noPlayers];
         buildPlayersArray();
         assignDealer(players);
         buildDeck();
         deal();
-
-
-        // TODO gameplay
-
+        // TODO first turn
     }
 
+    public void playGame()  {
+        // TODO new round
+        //TODO take turns
+    }
+
+    public void endGame()  {
+        pronounceWinners();
+    }
 
     public void assignDealer(Player[] players) {
         // generate a random integer corresponding to a player index
@@ -86,10 +99,23 @@ public class Game {
         }
     }
 
-//    public void pronounceWinners()  {
-//        System.out.println("***the winners***");
-//    }
-//
+    public void pronounceWinners()  {
+        String winnerStatement = "The winner is " + this.winners[0];
+        String loserStatement = ", and the loser is " + this.winners[noPlayers-1];
+        String runnerUpStatement;
+        if (noPlayers == 3)  {
+            runnerUpStatement = ", the runner up is " + this.winners[1];
+        }
+        else if  (noPlayers == 4)  {
+            runnerUpStatement = ", the runner ups are " + this.winners[1] + " and " + this.winners[2];
+        }
+        else  {
+            runnerUpStatement = ", the runner ups are " + this.winners[1] + ", " + this.winners[2] + " and "
+                    + this.winners[3];
+        }
+        System.out.println(winnerStatement + runnerUpStatement + loserStatement);
+    }
+
 //    public void newRound() {
 //
 //    }
