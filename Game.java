@@ -1,5 +1,7 @@
 package src;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
+
 import java.util.Random;
 import java.util.Scanner;
 
@@ -13,8 +15,12 @@ public class Game {
     public static PlayerHand[] playerHands;
     int turnNo;
     int currentPlayerIndex;
+    int currentCategoryIndex;
     String[] winners;
+    Card inPlay;
     Card lastCard;
+    int playersOut;
+    int roundNo;
     Deck deck;
 
     public Game(int noPlayers) {
@@ -27,19 +33,21 @@ public class Game {
         this.turnNo = 0;
         this.noPlayers = noPlayers;
         this.winners = new String[noPlayers];
+        this.playersOut = 0;
+        this.roundNo = 0;
         buildPlayersArray();
         assignDealer(players);
         buildDeck();
         deal();
-        // TODO first turn
     }
 
     public void playGame()  {
-        // TODO new round
+        newRound();
         //TODO take turns
     }
 
     public void endGame()  {
+        System.out.println("The game has ended.");
         pronounceWinners();
     }
 
@@ -90,13 +98,21 @@ public class Game {
         for (int cardsDealt = 0; cardsDealt < 8; cardsDealt++)  {
             for (int playerDealt = 0; playerDealt < noPlayers; playerDealt++)  {
                 // initialize PlayerHands with first card
-                if (cardsDealt == 0)  {  playerHands[playerDealt] = new PlayerHand();  }
+                if (cardsDealt == 0)  {
+                    playerHands[playerDealt] = new PlayerHand();
+                }
                 // add the first card in the playDeck to the player's hand
                 playerHands[playerDealt].addCard(deck.playDeck.get(0));
                 // remove this card from the playDeck
                 deck.playDeck.remove(0);
             }
         }
+        // set PlayerHands to each Player's this.hand
+        for (int i = 0; i < noPlayers; i++)  {
+            players[i].setHand(playerHands[i]);
+        }
+        // dealing the cards is the dealer's first turn
+        nextCurrentPlayer();
     }
 
     public void pronounceWinners()  {
@@ -116,9 +132,46 @@ public class Game {
         System.out.println(winnerStatement + runnerUpStatement + loserStatement);
     }
 
-//    public void newRound() {
-//
-//    }
+    public void nextCurrentPlayer()  {  currentPlayerIndex = ((currentPlayerIndex + 1) % noPlayers);  }
+
+    public void newRound() {
+        roundNo++;
+        // declare new round
+        System.out.println("New round: Round " + roundNo);
+        System.out.println("It is " + players[currentPlayerIndex].getPlayerName() + "'s turn to start the round. ");
+        this.currentCategoryIndex = players[currentPlayerIndex].newRound();
+        playCard(players[currentPlayerIndex].getInPlay());
+    }
+
+    public void playCard(Card card)  {
+        // assign card to class variable lastCard
+        this.lastCard = card;
+        // declare card as played
+        String currentCategory;
+        if (currentCategoryIndex == 0)  {  currentCategory = "hardness";  }
+        else if (currentCategoryIndex == 1)  {  currentCategory = "specific gravity";  }
+        else if (currentCategoryIndex == 2)  {  currentCategory = "cleavage";  }
+        else if (currentCategoryIndex == 3)  {  currentCategory = "crystal abundance";  }
+        else  {  currentCategory = "economic value";  }
+        System.out.println("The current category for comparison is " + currentCategory + ". \n"
+                + players[currentCategoryIndex].getPlayerName() + " has played the following card: \n"
+                + card.toString());
+        checkWinners();
+    }
+
+    public void checkWinners()  {
+        for (int i = 0; i < noPlayers; i++)  {
+            if (players[i].hand.winCondition)  {
+                // add to winners
+                winners[playersOut] = players[i].getPlayerName();
+                playersOut++;
+                if (playersOut == (noPlayers-1))  {
+                    // TODO set loser
+                    endGame();
+                }
+            }
+        }
+    }
 //
 //    public void newTurn(Player[] players) {
 //        System.out.println("It is now " + players[currentPlayerIndex].getPlayerName() + "'s turn ");

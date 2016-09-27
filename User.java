@@ -7,9 +7,9 @@ import java.util.Scanner;
  * This class manages user input and user functionalities for the game "Project Mineral: Super Trump"
  */
 public class User {
+    Game newGame;
     //String userName;
     public User() {
-        //this.userName = requestUserName();
         showWelcome();
         displayPlayMenu();
         makePlayMenuSelection();
@@ -19,18 +19,12 @@ public class User {
         System.out.println("Hello, Welcome to Project Mineral: Super Trumps ");
     }
 
-//    public String requestUserName()  {
-//        System.out.println("Please enter your name ");
-//        Scanner inputDevice = new Scanner(System.in);
-//        return inputDevice.next();
-//    }
-
-    public static void displayPlayMenu()  {
+    public void displayPlayMenu()  {
         System.out.println("Play Menu: Please make a selection. \n (1) new game \n (2) quit game " +
                 "\n (3) game instructions");
     }
 
-    public static void makePlayMenuSelection() {
+    public void makePlayMenuSelection() {
         // requests a menu selection from the user and runs the corresponding method
         boolean confirm = false;
         while (!confirm) {
@@ -42,6 +36,9 @@ public class User {
                 if (inputDevice.nextInt() == 1)  {
                     confirm = true;
                     newGame();
+                    // at the end of the game, return to play menu
+                    displayPlayMenu();
+                    makePlayMenuSelection();
                 }
                 else  {displayPlayMenu();}
             }
@@ -70,7 +67,7 @@ public class User {
         }
     }
 
-    public static void newGame()  {
+    public void newGame()  {
         boolean confirm = false;
         while (!confirm) {
             System.out.println("The game requires 3-5 players. \nPlease enter number of players: ");
@@ -85,18 +82,18 @@ public class User {
                 if (inputDevice.nextInt() == 1) {
                     confirm = true;
                     // create new game object
-                    Game newGame = new Game(noPlayers);
+                    this.newGame = new Game(noPlayers);
                 }
             }
         }
     }
 
-    public static void quitGame()  {
+    public void quitGame()  {
         System.out.println("Goodbye");
         // end of program
     }
 
-    public static void gameInstructions()  {
+    public void gameInstructions()  {
         System.out.println(" *** game instructions *** ");
         // Game instructions provided as images
         // Return to play menu
@@ -104,7 +101,4 @@ public class User {
         makePlayMenuSelection();
     }
 
-//    public String getUserName() {
-//        return userName;
-//    }
 }

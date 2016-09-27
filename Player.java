@@ -11,12 +11,13 @@ public abstract class Player  {
     boolean isDealer;
     boolean currentPlayer;
     PlayerHand hand;
+
     public Player(int playerIndex, String playerName) {
         this.playerName = playerName;
         this.playerIndex = playerIndex;
         this.isDealer = false;
         this.currentPlayer = false;
-        hand = new PlayerHand();
+        this.hand = new PlayerHand();
     }
 
     public int getPlayerIndex() {
@@ -31,6 +32,8 @@ public abstract class Player  {
         return playerName;
     }
 
+    public void setHand(PlayerHand hand)  { this.hand = hand; }
+
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
     }
@@ -43,7 +46,11 @@ public abstract class Player  {
         isDealer = dealer;
     }
 
+    public abstract int newRound();
+
     public abstract void takeTurn(Card lastCard);
+
+    public abstract Card getInPlay();
 
         // TODO acquire cards
 
