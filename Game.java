@@ -54,7 +54,7 @@ public class Game {
     public void assignDealer(Player[] players) {
         // generate a random integer corresponding to a player index
         Random rn = new Random();
-        int dealerIndex = rn.nextInt(players.length - 1);
+        int dealerIndex = rn.nextInt(players.length);
         System.out.println("The dealer is " + players[dealerIndex].getPlayerName());
         this.currentPlayerIndex = dealerIndex;
 
@@ -154,7 +154,7 @@ public class Game {
         else if (currentCategoryIndex == 3)  {  currentCategory = "crystal abundance";  }
         else  {  currentCategory = "economic value";  }
         System.out.println("The current category for comparison is " + currentCategory + ". \n"
-                + players[currentCategoryIndex].getPlayerName() + " has played the following card: \n"
+                + players[currentPlayerIndex].getPlayerName() + " has played the following card: \n"
                 + card.toString());
         checkWinners();
     }

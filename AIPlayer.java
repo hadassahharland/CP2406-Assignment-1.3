@@ -20,7 +20,7 @@ public class AIPlayer extends Player  {
     public int newRound()  {
         // AI decision: Play any play card from hand, return random int corresponding to the currentCategoryIndex
         Random rn = new Random();
-        int currentCategoryIndex = rn.nextInt(4);
+        int currentCategoryIndex = rn.nextInt(5);
         boolean cardFound = false;
         int i = 0;
         while (!cardFound && i < super.hand.hand.size())  {

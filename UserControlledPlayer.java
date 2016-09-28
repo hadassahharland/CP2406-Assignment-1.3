@@ -57,10 +57,23 @@ public class UserControlledPlayer extends Player {
         }
         confirm = false;
         while (!confirm)  {
-            System.out.println("Choose a card from your hand to play");
+            System.out.println("Choose a card from your hand to play, or (0) to show hand");
             Scanner inputDevice = new Scanner(System.in);
             String input = inputDevice.next();
-            if (true); {}  //TODO if input is number && input < hand.size(), choose that card else new input.
+            if (input.equals("0"))  {  super.hand.show();  }
+            else {
+                for (int i = 1; i <= super.hand.hand.size(); i++) {
+                    // convert index to string to compare to input
+                    String index = Integer.toString(i);
+                    if (input.equals(index)) {
+                        inPlay = super.hand.hand.get(i - 1);
+                        confirm = true;
+                    }
+                }
+                if (!confirm) {
+                    System.out.println("The card you indicated was not found in your hand");
+                }
+            }
         }
         // remove the card from the player's hand
         super.hand.removeCard(inPlay);
