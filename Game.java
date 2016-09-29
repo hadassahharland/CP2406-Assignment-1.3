@@ -37,13 +37,12 @@ public class Game {
         this.roundNo = 0;
         buildPlayersArray();
         assignDealer(players);
-        buildDeck();
+        this.deck = new Deck();
         deal();
     }
 
     public void playGame()  {
         newRound();
-        //TODO take turns
     }
 
     public void endGame()  {
@@ -57,7 +56,6 @@ public class Game {
         int dealerIndex = rn.nextInt(players.length);
         System.out.println("The dealer is " + players[dealerIndex].getPlayerName());
         this.currentPlayerIndex = dealerIndex;
-
     }
 
     public void buildPlayersArray() {
@@ -86,10 +84,6 @@ public class Game {
         } else {
             return new UserControlledPlayer(playerIndex, playerName);
         }
-    }
-
-    public void buildDeck() {
-        this.deck = new Deck();
     }
 
     public void deal()  {
@@ -132,54 +126,128 @@ public class Game {
         System.out.println(winnerStatement + runnerUpStatement + loserStatement);
     }
 
-    public void nextCurrentPlayer()  {  currentPlayerIndex = ((currentPlayerIndex + 1) % noPlayers);  }
+    public void nextCurrentPlayer()  {
+        currentPlayerIndex = ((currentPlayerIndex + 1) % noPlayers);
+        // if the current player is
+        while (players[currentPlayerIndex].isPassed())  {
+            System.out.println(players[currentPlayerIndex].getPlayerName() + " has passed until the end of the round.");
+            currentPlayerIndex = ((currentPlayerIndex + 1)% noPlayers);
+        }
+    }
 
     public void newRound() {
         roundNo++;
         // declare new round
         System.out.println("New round: Round " + roundNo);
+        // set all players passed status to false
+        for (int i = 0; i < players.length; i++)  {  players[i].setPassed(false); }
         System.out.println("It is " + players[currentPlayerIndex].getPlayerName() + "'s turn to start the round. ");
         this.currentCategoryIndex = players[currentPlayerIndex].newRound();
         playCard(players[currentPlayerIndex].getInPlay());
+        endofturn();
     }
 
-    public void playCard(Card card)  {
+    public void playCard(Card card) {
+        if (card instanceof PlayCard) {  playCard((PlayCard) card); }
+        else  { playCard((TrumpCard) card); }
+    }
+
+    public void playCard(PlayCard card)  {
         // assign card to class variable lastCard
         this.lastCard = card;
         // declare card as played
         String currentCategory;
-        if (currentCategoryIndex == 0)  {  currentCategory = "hardness";  }
-        else if (currentCategoryIndex == 1)  {  currentCategory = "specific gravity";  }
-        else if (currentCategoryIndex == 2)  {  currentCategory = "cleavage";  }
-        else if (currentCategoryIndex == 3)  {  currentCategory = "crystal abundance";  }
-        else  {  currentCategory = "economic value";  }
-        System.out.println("The current category for comparison is " + currentCategory + ". \n"
-                + players[currentPlayerIndex].getPlayerName() + " has played the following card: \n"
-                + card.toString());
-        checkWinners();
+        String categoryValue;
+        if (currentCategoryIndex == 0)  {
+            currentCategory = "hardness";
+            categoryValue = card.hardness;
+        }
+        else if (currentCategoryIndex == 1)  {
+            currentCategory = "specific gravity";
+            categoryValue = card.specificGravity;
+        }
+        else if (currentCategoryIndex == 2)  {
+            currentCategory = "cleavage";
+            categoryValue = card.cleavage;
+        }
+        else if (currentCategoryIndex == 3)  {
+            currentCategory = "crustal abundance";
+            categoryValue = card.crustalAbundance;
+        }
+        else  {
+            currentCategory = "economic value";
+            categoryValue = card.economicValue;
+        }
+//        System.out.println("The play category is " + currentCategory + ". \n"
+//                + players[currentPlayerIndex].getPlayerName() + " has played the following card: \n"
+//                + card.toString());
+        System.out.println(players[currentPlayerIndex].getPlayerName() + " has played a card: \n" + card.name + ", "
+                + currentCategory + ", " + categoryValue);
+    }
+
+    public void playCard(TrumpCard card)  {
+        // begin new round
+        roundNo++;
+        // determine the new play category
+        String[] categories = {"hardness", "specific gravity", "cleavage", "crustal abundance", "economic value"};
+        if (card.cardIndex == 54)  {  currentCategoryIndex = 4;  }
+        else if (card.cardIndex == 55)  {  currentCategoryIndex = 3;  }
+        else if (card.cardIndex == 56)  {  currentCategoryIndex = 0;  }
+        else if (card.cardIndex == 57)  {  currentCategoryIndex = 2;  }
+        else if (card.cardIndex == 58)  {  currentCategoryIndex = 1;  }
+        // Player to choose category
+        else if (card.cardIndex == 59)  {  currentCategoryIndex = players[currentPlayerIndex].chooseCategory();  }
+        else {  System.out.println("An error has occurred, this is not a Trump Card");  }
+        // declare new round
+        System.out.println("A trump card was played! \nNew round: Round " + roundNo);
+        // set all players passed status to false
+        for (int i = 0; i < players.length; i++)  {  players[i].setPassed(false); }
+        System.out.println(players[currentPlayerIndex].getPlayerName() + " has played a card: \n"
+                + card.toString() + "\n The play category is now " + categories[currentCategoryIndex]);
     }
 
     public void checkWinners()  {
         for (int i = 0; i < noPlayers; i++)  {
             if (players[i].hand.winCondition)  {
+                //TODO remove winners from players[]
                 // add to winners
                 winners[playersOut] = players[i].getPlayerName();
                 playersOut++;
-                if (playersOut == (noPlayers-1))  {
+                noPlayers--;
+                if (noPlayers == 1)  {
                     // TODO set loser
                     endGame();
                 }
             }
         }
     }
-//
-//    public void newTurn(Player[] players) {
-//        System.out.println("It is now " + players[currentPlayerIndex].getPlayerName() + "'s turn ");
-//        System.out.println("The last card played was: \n" + lastCard.toString());
-//        players[currentPlayerIndex].takeTurn(lastCard);
-//        // TODO prompt player to take turn
-//
-//    }
+
+    public void checkPassed()  {
+        // determine how many players have not passed
+        int playersIn = noPlayers;
+        for (int i = 0; i < noPlayers; i++)  {
+            if (players[i].isPassed())  {  playersIn--; }
+        }
+        if (playersIn == 1)  {  newRound(); }
+        // TODO check newRound is played by correct player
+    }
+
+    public void endofturn()  {
+        checkWinners();
+        checkPassed();
+        nextCurrentPlayer();
+        newTurn();
+    }
+
+    public void newTurn() {
+        System.out.println("It is now " + players[currentPlayerIndex].getPlayerName() + "'s turn ");
+        System.out.println("The last card played was: \n" + lastCard.toString());
+        players[currentPlayerIndex].takeTurn(lastCard, currentCategoryIndex);
+        // If the player has passed, do not put card into play
+        if (!players[currentPlayerIndex].isPassed())  {  playCard(players[currentPlayerIndex].getInPlay());  }
+    }
+
+    public Card dealCard()  {  return deck.dealCard(); }
 }
 
 

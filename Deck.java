@@ -115,4 +115,10 @@ public class Deck {
             }
         }
     }
+
+    public Card dealCard()  {
+        Card card = playDeck.get(0);
+        playDeck.remove(card);
+        return card;
+    }
 }

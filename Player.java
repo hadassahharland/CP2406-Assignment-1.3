@@ -8,24 +8,15 @@ package src;
 public abstract class Player  {
     int playerIndex;
     String playerName;
-    boolean isDealer;
+    boolean passed;
     boolean currentPlayer;
     PlayerHand hand;
 
     public Player(int playerIndex, String playerName) {
         this.playerName = playerName;
         this.playerIndex = playerIndex;
-        this.isDealer = false;
         this.currentPlayer = false;
         this.hand = new PlayerHand();
-    }
-
-    public int getPlayerIndex() {
-        return playerIndex;
-    }
-
-    public void setPlayerIndex(byte playerIndex) {
-        this.playerIndex = playerIndex;
     }
 
     public String getPlayerName() {
@@ -34,31 +25,26 @@ public abstract class Player  {
 
     public void setHand(PlayerHand hand)  { this.hand = hand; }
 
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
+    public boolean isPassed() {
+        return passed;
     }
 
-    public boolean isDealer() {
-        return isDealer;
-    }
-
-    public void setDealer(boolean dealer) {
-        isDealer = dealer;
+    public void setPassed(boolean passed) {
+        this.passed = passed;
     }
 
     public abstract int newRound();
 
-    public abstract void takeTurn(Card lastCard);
+    public abstract void takeTurn(Card lastCard, int currentCategoryIndex);
 
     public abstract Card getInPlay();
 
-        // TODO acquire cards
+    public abstract int chooseCategory();
 
-
-    // TODO view cards
-    // TODO play card + state card details
-    // TODO pass turn
-    // TODO win condition
-    // TODO view last card
-
+    public void pass()  {
+        passed = true;
+        System.out.println(this.getPlayerName() + " has passed and picked up a card from the deck");
+        hand.addCard(SuperTrump.currentUser.newGame.dealCard());
+        // TODO fix dealCard null pointer exception
+    }
 }

@@ -25,4 +25,5 @@ public abstract class Card {
 
     public abstract String toString();
 
+    public abstract boolean validPlay(Card lastCard, int currentCategoryIndex);
 }

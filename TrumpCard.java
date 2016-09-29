@@ -16,5 +16,8 @@ public class TrumpCard extends Card {
         return name + " (Trump card): " + function;
     }
 
-
+    public boolean validPlay(Card lastCard, int currentCategoryIndex) {
+        // always a valid play to play a trump card
+        return true;
+    }
 }

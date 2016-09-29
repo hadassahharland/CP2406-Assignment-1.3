@@ -8,7 +8,7 @@ public class PlayCard extends Card {
     String chemicalStructure;
     String classification;
     String cleavage;
-    String crystalAbundance;
+    String crustalAbundance;
     String crystalSystem;
     String economicValue;
     String hardness;
@@ -16,13 +16,13 @@ public class PlayCard extends Card {
     String specificGravity;
 
     public PlayCard(int cardIndex, String chemicalStructure, String classification, String cleavage,
-                    String crystalAbundance, String crystalSystem, String economicValue, String fileName,
+                    String crustalAbundance, String crystalSystem, String economicValue, String fileName,
                     String hardness, String imageName, String occurance, String specificGravity, String name) {
         super(cardIndex, fileName, imageName, name);
         this.chemicalStructure = chemicalStructure;
         this.classification = classification;
         this.cleavage = cleavage;
-        this.crystalAbundance = crystalAbundance;
+        this.crustalAbundance = crustalAbundance;
         this.crystalSystem = crystalSystem;
         this.economicValue = economicValue;
         this.hardness = hardness;
@@ -30,42 +30,55 @@ public class PlayCard extends Card {
         this.specificGravity = specificGravity;
     }
 
-    public boolean isHigherThan(PlayCard otherCard, int currentCategoryIndex)  {
-        // returns true if the the card is higher than the 'otherCard' in the current category
-        if (currentCategoryIndex == 0) {
-            // the category is hardness
-            if (splitValues(this.hardness) > splitValues(otherCard.hardness))  {  return true;  }
-            else  {  return false;  }
-        }
-        else if (currentCategoryIndex == 1) {
-            // the category is Specific Gravity
-            if (splitValues(this.specificGravity) > splitValues(otherCard.specificGravity))  {  return true;  }
-            else  {  return false;  }
-        }
-        else if (currentCategoryIndex ==2 )  {
-            // the category is Cleavage
-            if (splitCleavage(this.cleavage) > splitCleavage(otherCard.cleavage))  {  return true;  }
-            else  {  return false;  }
-        }
-        else if (currentCategoryIndex == 3)  {
-            // the category is Crystal Abundance
-            if (splitCrystalAbundance(this.crystalAbundance) > splitCrystalAbundance(otherCard.crystalAbundance))  {
-                return true;
+    public boolean validPlay(Card lastCard, int currentCategoryIndex)  {
+        if (lastCard instanceof PlayCard) {
+            PlayCard playCard = (PlayCard) lastCard;
+            // returns true if the the card is higher than the 'lastCard' in the current category
+            if (currentCategoryIndex == 0) {
+                // the category is hardness
+                if (splitValues(this.hardness) > splitValues(playCard.hardness)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if (currentCategoryIndex == 1) {
+                // the category is Specific Gravity
+                if (splitValues(this.specificGravity) > splitValues(playCard.specificGravity)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if (currentCategoryIndex == 2) {
+                // the category is Cleavage
+                if (splitCleavage(this.cleavage) > splitCleavage(playCard.cleavage)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if (currentCategoryIndex == 3) {
+                // the category is Crystal Abundance
+                if (splitCrustalAbundance(this.crustalAbundance) > splitCrustalAbundance(playCard.crustalAbundance)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                // the category is Economic Value
+                if (splitEconomicValue(this.economicValue) > splitEconomicValue(playCard.economicValue)) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
-            else  {  return false;  }
         }
-        else {
-            // the category is Economic Value
-            if (splitEconomicValue(this.economicValue) > splitEconomicValue(otherCard.economicValue)) {
-                return true;
-            }
-            else {  return false;  }
-        }
+        // validPlay always returns true for any trump card
+        else  {  return true;  }
     }
 
     public String toString()  {
         return name + " (" + chemicalStructure + "): Hardness: " + hardness + ", Specific Gravity: " + specificGravity
-                + ", Crystal Abundance: " + crystalAbundance + ", Economic Value: " + economicValue;
+                + ", Cleavage: " + cleavage + ", Crystal Abundance: " + crustalAbundance + ", Economic Value: "
+                + economicValue;
     }
 
     public double splitValues(String string) {
@@ -97,14 +110,14 @@ public class PlayCard extends Card {
         return -1;
     }
 
-    public int splitCrystalAbundance(String string)  {
-        // crystal abundance comparitors have been hardcoded into an array
-        String[] crystalAbundanceValues = {"ultratrace", "trace", "low", "moderate", "high", "very high"};
+    public int splitCrustalAbundance(String string)  {
+        // crustal abundance comparitors have been hardcoded into an array
+        String[] crustalAbundanceValues = {"ultratrace", "trace", "low", "moderate", "high", "very high"};
         // returns the index of the array at which the string was found, or -1 if it was not found
-        for (int i = 0; i > crystalAbundanceValues.length; i++)  {
-            if (string.equals(crystalAbundanceValues[i]))  {  return i;  }
+        for (int i = 0; i > crustalAbundanceValues.length; i++)  {
+            if (string.equals(crustalAbundanceValues[i]))  {  return i;  }
         }
-        System.out.println("Crystal Abundance comparitor was not found");
+        System.out.println("Crustal Abundance comparitor was not found");
         return -1;
     }
 
