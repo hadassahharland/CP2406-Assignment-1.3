@@ -22,8 +22,8 @@ public class UserControlledPlayer extends Player {
 
     public void takeTurn(Card lastCard, int currentCategoryIndex) {
         // User decision: play any card as indicated in hand or pass
-        String[] categories = {"hardness", "specific gravity", "cleavage", "crustal abundance", "economic value"};
-        System.out.println("The play category is " + categories[currentCategoryIndex]);
+        System.out.println("The last card played was: \n" + lastCard.toString());
+        System.out.println("The play category is " + Game.categories[currentCategoryIndex]);
         showHand();
         boolean confirm = false, cardPlayed = false;
         while (!confirm)  {
@@ -33,28 +33,27 @@ public class UserControlledPlayer extends Player {
             if (input.equals("0"))  {  super.hand.show();  }
             else if (input.equals("00"))  {
                 confirm = true;
-                super.pass();
+                this.passed = true;
             }
             else {
                 for (int i = 1; i <= super.hand.hand.size(); i++) {
                     // convert index to string to compare to input
                     String index = Integer.toString(i);
                     if (input.equals(index)) {
-                        Card card = super.hand.hand.get(i-1);
+                        Card card = super.hand.hand.get(i - 1);
                         if (card.validPlay(lastCard, currentCategoryIndex)) {
                             inPlay = super.hand.hand.get(i - 1);
                             cardPlayed = true;
                             confirm = true;
-                        }
-                        else  {
+                        } else {
                             // occurs if the card selected is a play card that is not higher in the play category
                             System.out.println("The card you selected is not a valid play");
                         }
                     }
                 }
-                if (!confirm) {
-                    System.out.println("The card you selected was not found in your hand");
-                }
+            }
+            if (!confirm) {
+                System.out.println("The card you selected was not found in your hand");
             }
         }
         // remove the card from the player's hand
@@ -122,5 +121,23 @@ public class UserControlledPlayer extends Player {
             }
         }
         return currentCategoryIndex;
+    }
+
+    public boolean magnetiteWinCondition() {
+        // if the player has the Magnetite card in their hand, ask if they would like to play it and win the game
+        // the card index of the Magnetite card is 45
+        for (int i = 0; i < hand.hand.size(); i++) {
+            if (hand.hand.get(i).cardIndex == 45) {
+                System.out.println("If the Magnetite card and the Geophysicist card are played together, that player " +
+                        "wins the game. You have played the Geophysicist card, and the have the Magnetite card in " +
+                        "your hand. Would you like to play the Magnetite card and win the game? \n (1) yes \n (2) no");
+                Scanner input = new Scanner(System.in);
+                if (input.next().equals("1")) {
+                    hand.winCondition = true;
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

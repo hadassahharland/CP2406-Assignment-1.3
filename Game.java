@@ -1,7 +1,5 @@
 package src;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
-
 import java.util.Random;
 import java.util.Scanner;
 
@@ -22,6 +20,7 @@ public class Game {
     int playersOut;
     int roundNo;
     Deck deck;
+    static String[] categories = {"hardness", "specific gravity", "cleavage", "crustal abundance", "economic value"};
 
     public Game(int noPlayers) {
         startGame(noPlayers);
@@ -87,10 +86,10 @@ public class Game {
     }
 
     public void deal()  {
-        playerHands = new PlayerHand[noPlayers];
+        playerHands = new PlayerHand[players.length];
         // the first card is dealt to the first PlayerHand in the playerHands ArrayList.
         for (int cardsDealt = 0; cardsDealt < 8; cardsDealt++)  {
-            for (int playerDealt = 0; playerDealt < noPlayers; playerDealt++)  {
+            for (int playerDealt = 0; playerDealt < players.length; playerDealt++)  {
                 // initialize PlayerHands with first card
                 if (cardsDealt == 0)  {
                     playerHands[playerDealt] = new PlayerHand();
@@ -102,7 +101,7 @@ public class Game {
             }
         }
         // set PlayerHands to each Player's this.hand
-        for (int i = 0; i < noPlayers; i++)  {
+        for (int i = 0; i < players.length; i++)  {
             players[i].setHand(playerHands[i]);
         }
         // dealing the cards is the dealer's first turn
@@ -113,10 +112,10 @@ public class Game {
         String winnerStatement = "The winner is " + this.winners[0];
         String loserStatement = ", and the loser is " + this.winners[noPlayers-1];
         String runnerUpStatement;
-        if (noPlayers == 3)  {
+        if (players.length == 3)  {
             runnerUpStatement = ", the runner up is " + this.winners[1];
         }
-        else if  (noPlayers == 4)  {
+        else if  (players.length == 4)  {
             runnerUpStatement = ", the runner ups are " + this.winners[1] + " and " + this.winners[2];
         }
         else  {
@@ -127,11 +126,13 @@ public class Game {
     }
 
     public void nextCurrentPlayer()  {
-        currentPlayerIndex = ((currentPlayerIndex + 1) % noPlayers);
+        currentPlayerIndex = ((currentPlayerIndex + 1) % players.length);
         // if the current player is
-        while (players[currentPlayerIndex].isPassed())  {
-            System.out.println(players[currentPlayerIndex].getPlayerName() + " has passed until the end of the round.");
-            currentPlayerIndex = ((currentPlayerIndex + 1)% noPlayers);
+        while (players[currentPlayerIndex].isPassed() || players[currentPlayerIndex].isWinner())  {
+            if (players[currentPlayerIndex].isPassed()) {
+                System.out.println(players[currentPlayerIndex].getPlayerName() + " has passed until the end of the round.");
+            }
+            currentPlayerIndex = ((currentPlayerIndex + 1)% players.length);
         }
     }
 
@@ -143,8 +144,10 @@ public class Game {
         for (int i = 0; i < players.length; i++)  {  players[i].setPassed(false); }
         System.out.println("It is " + players[currentPlayerIndex].getPlayerName() + "'s turn to start the round. ");
         this.currentCategoryIndex = players[currentPlayerIndex].newRound();
+        System.out.println(players[currentPlayerIndex].getPlayerName() + " has chosen the play category to be "
+                + categories[currentCategoryIndex]);
         playCard(players[currentPlayerIndex].getInPlay());
-        endofturn();
+        endOfTurn();
     }
 
     public void playCard(Card card) {
@@ -186,24 +189,32 @@ public class Game {
     }
 
     public void playCard(TrumpCard card)  {
-        // begin new round
-        roundNo++;
         // determine the new play category
-        String[] categories = {"hardness", "specific gravity", "cleavage", "crustal abundance", "economic value"};
-        if (card.cardIndex == 54)  {  currentCategoryIndex = 4;  }
-        else if (card.cardIndex == 55)  {  currentCategoryIndex = 3;  }
-        else if (card.cardIndex == 56)  {  currentCategoryIndex = 0;  }
-        else if (card.cardIndex == 57)  {  currentCategoryIndex = 2;  }
-        else if (card.cardIndex == 58)  {  currentCategoryIndex = 1;  }
-        // Player to choose category
+        if (card.cardIndex == 54)  {  currentCategoryIndex = 4;  }              // the Miner: economic value
+        else if (card.cardIndex == 55)  {  currentCategoryIndex = 3;  }         // the Petrologist: crustal abundance
+        else if (card.cardIndex == 56)  {  currentCategoryIndex = 0;  }         // the Gemmologist: hardness
+        else if (card.cardIndex == 57)  {  currentCategoryIndex = 2;  }         // the Mineralogist: cleavage
+        else if (card.cardIndex == 58)  {                                       // the Geophysicist: specific gravity
+            currentCategoryIndex = 1;
+            // If a player throws the Geophysicist card together with the Magnetite card, then that player wins the hand
+            if (players[currentPlayerIndex].magnetiteWinCondition())  {
+                System.out.println(players[currentPlayerIndex].getPlayerName() + " has played the Geophysicist card " +
+                        "and the Magnetite card and so has won.");
+                checkWinners();
+                newRound();
+            }
+        }
+        // the Geologist: Player to choose category
         else if (card.cardIndex == 59)  {  currentCategoryIndex = players[currentPlayerIndex].chooseCategory();  }
         else {  System.out.println("An error has occurred, this is not a Trump Card");  }
         // declare new round
+        roundNo++;
         System.out.println("A trump card was played! \nNew round: Round " + roundNo);
         // set all players passed status to false
         for (int i = 0; i < players.length; i++)  {  players[i].setPassed(false); }
         System.out.println(players[currentPlayerIndex].getPlayerName() + " has played a card: \n"
-                + card.toString() + "\n The play category is now " + categories[currentCategoryIndex]);
+                + card.toString() + "\nThe play category is now " + categories[currentCategoryIndex]);
+        this.lastCard = card;
     }
 
     public void checkWinners()  {
@@ -215,7 +226,9 @@ public class Game {
                 playersOut++;
                 noPlayers--;
                 if (noPlayers == 1)  {
-                    // TODO set loser
+                    for (int j = 0; j < players.length; j++) {
+                        if (!players[j].isWinner()) {  winners[winners.length - 1] = players[j].getPlayerName(); }
+                    }
                     endGame();
                 }
             }
@@ -224,15 +237,21 @@ public class Game {
 
     public void checkPassed()  {
         // determine how many players have not passed
-        int playersIn = noPlayers;
-        for (int i = 0; i < noPlayers; i++)  {
-            if (players[i].isPassed())  {  playersIn--; }
+        int playersIn = players.length;
+        Player nextPlayer = null;
+        for (int i = 0; i < players.length; i++)  {
+            if (players[i].isPassed() || players[i].isWinner())  {
+                playersIn--;
+            }
+            else  { nextPlayer = players[i]; }
         }
-        if (playersIn == 1)  {  newRound(); }
-        // TODO check newRound is played by correct player
+        if (playersIn == 1)  {
+            // New round is started by the player who had not passed
+            currentPlayerIndex = nextPlayer.playerIndex;
+            newRound(); }
     }
 
-    public void endofturn()  {
+    public void endOfTurn()  {
         checkWinners();
         checkPassed();
         nextCurrentPlayer();
@@ -241,13 +260,23 @@ public class Game {
 
     public void newTurn() {
         System.out.println("It is now " + players[currentPlayerIndex].getPlayerName() + "'s turn ");
-        System.out.println("The last card played was: \n" + lastCard.toString());
         players[currentPlayerIndex].takeTurn(lastCard, currentCategoryIndex);
-        // If the player has passed, do not put card into play
-        if (!players[currentPlayerIndex].isPassed())  {  playCard(players[currentPlayerIndex].getInPlay());  }
+        // if the player has passed on this turn the boolean is true
+        if (players[currentPlayerIndex].isPassed()) {
+            System.out.println(players[currentPlayerIndex].getPlayerName() + " has passed and picked up a card from " +
+                    "the deck");
+            // take the first card in the deck
+            Card card = deck.playDeck.get(0);
+            // remove that card from the deck
+            deck.playDeck.remove(card);
+            // add it to the player's hand
+            players[currentPlayerIndex].hand.addCard(card);
+        }
+        else  {
+            playCard(players[currentPlayerIndex].getInPlay());
+        }
+        endOfTurn();
     }
-
-    public Card dealCard()  {  return deck.dealCard(); }
 }
 
 

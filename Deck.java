@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static jdk.nashorn.internal.objects.ArrayBufferView.length;
-
 /**
  * Created by Hadassah Harland on 21/09/2016.
  * This class creates a cards object consisting of a random array of 62 card objects for the game
@@ -22,13 +20,12 @@ import static jdk.nashorn.internal.objects.ArrayBufferView.length;
 public class Deck {
     public static Card[] cards;
     ArrayList<Card> playDeck;
-    int NOPLAYCARDS = 54;
-    int NOTRUMPCARDS = 6;
-    //String[] playCardData;
+    final int NO_PLAY_CARDS = 54;
+    final int NO_TRUMP_CARDS = 6;
 
     public Deck() {
         // for each set of card details in the file, create a card object and store in an array of 60 card objects
-        cards = new Card[(NOPLAYCARDS+NOTRUMPCARDS)];
+        cards = new Card[(NO_PLAY_CARDS + NO_TRUMP_CARDS)];
         loadfromfile();
         shuffleDeck();
     }
@@ -40,16 +37,16 @@ public class Deck {
         InputStream input;
 
         // Constants for playCards file
-        int LINESINPLAYFILE = 702;
-        int LINESPERPLAYCARD = 13;
+        final int LINES_IN_PLAY_FILE = 702;
+        final int LINES_PER_PLAY_CARD = 13;
 
-        String[] playCardData = new String[LINESINPLAYFILE];
+        String[] playCardData = new String[LINES_IN_PLAY_FILE];
         // Exception handling required to catch program in the case of an unreadable file
         try {
 //            path.getFileSystem().provider().checkAccess(file, READ);
             input = Files.newInputStream(file);
             BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-            for (int lineNo = 0; lineNo < LINESINPLAYFILE; lineNo++) {
+            for (int lineNo = 0; lineNo < LINES_IN_PLAY_FILE; lineNo++) {
                 String lineContent = reader.readLine();
                 // save each line of the file to an object in array
                 playCardData[lineNo] = lineContent;
@@ -58,10 +55,10 @@ public class Deck {
         } catch (IOException e) {
             System.out.println("Error: Data file 'playCards.txt' cannot be read");
         }
-        for (int cardIndex = 0; cardIndex < NOPLAYCARDS; cardIndex++)  {
-            int startIndex = cardIndex*LINESPERPLAYCARD;
-            String[] temp = new String[LINESPERPLAYCARD];
-            System.arraycopy(playCardData,startIndex,temp,0,LINESPERPLAYCARD);
+        for (int cardIndex = 0; cardIndex < NO_PLAY_CARDS; cardIndex++)  {
+            int startIndex = cardIndex*LINES_PER_PLAY_CARD;
+            String[] temp = new String[LINES_PER_PLAY_CARD];
+            System.arraycopy(playCardData,startIndex,temp,0,LINES_PER_PLAY_CARD);
             // generate new card using the data from the file
             cards[cardIndex] = new PlayCard(cardIndex,temp[1],temp[2],temp[3],temp[4],temp[5],temp[6],temp[7],
                     temp[8],temp[9],temp[10],temp[11],temp[12]);
@@ -73,16 +70,16 @@ public class Deck {
 
 
         // Constants for trumpCards file
-        int LINESINTRUMPFILE = 30;
-        int LINESPERTRUMPCARD = 5;
+        final int LINES_IN_TRUMP_FILE = 30;
+        final int LINES_PER_TRUMP_CARD = 5;
 
-        String[] trumpCardData = new String[LINESINTRUMPFILE];
+        String[] trumpCardData = new String[LINES_IN_TRUMP_FILE];
         // Exception handling required to catch program in the case of an unreadable file
         try {
 //            path.getFileSystem().provider().checkAccess(file, READ);
             input = Files.newInputStream(file2);
             BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-            for (int lineNo = 0; lineNo < LINESINTRUMPFILE; lineNo++) {
+            for (int lineNo = 0; lineNo < LINES_IN_TRUMP_FILE; lineNo++) {
                 String lineContent = reader.readLine();
                 // save each line of the file to an object in array
                 trumpCardData[lineNo] = lineContent;
@@ -91,10 +88,10 @@ public class Deck {
         } catch (IOException e) {
             System.out.println("Error: Data file 'trumpCards.txt' cannot be read");
         }
-        for (int cardIndex = NOPLAYCARDS; cardIndex < NOPLAYCARDS+NOTRUMPCARDS; cardIndex++)  {
-            int startIndex = (cardIndex-NOPLAYCARDS)*LINESPERTRUMPCARD;
-            String[] temp = new String[LINESPERTRUMPCARD];
-            System.arraycopy(trumpCardData,startIndex,temp,0,LINESPERTRUMPCARD);
+        for (int cardIndex = NO_PLAY_CARDS; cardIndex < NO_PLAY_CARDS + NO_TRUMP_CARDS; cardIndex++)  {
+            int startIndex = (cardIndex- NO_PLAY_CARDS)*LINES_PER_TRUMP_CARD;
+            String[] temp = new String[LINES_PER_TRUMP_CARD];
+            System.arraycopy(trumpCardData,startIndex,temp,0,LINES_PER_TRUMP_CARD);
             // generate new card using the data from the file
             cards[cardIndex] = new TrumpCard(cardIndex,temp[1],temp[2],temp[3],temp[4]);
             //System.out.println(cardIndex + cards[cardIndex].toString());
@@ -116,9 +113,11 @@ public class Deck {
         }
     }
 
-    public Card dealCard()  {
-        Card card = playDeck.get(0);
-        playDeck.remove(card);
-        return card;
-    }
+//    public Card dealCard()  {
+//        System.out.println("ONE");
+//        Card card = playDeck.get(0);
+//        System.out.println("TWO" + card.name);
+//        playDeck.remove(card);
+//        return card;
+//    }
 }

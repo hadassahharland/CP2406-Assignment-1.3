@@ -9,7 +9,7 @@ import static jdk.nashorn.internal.objects.ArrayBufferView.length;
 public class SuperTrumpTesting {
     public static void main(String[] args) {
         Deck deck = new Deck();
-//        for (int i = 0; i < (deck.NOPLAYCARDS+deck.NOTRUMPCARDS); i++)  {
+//        for (int i = 0; i < (deck.NO_PLAY_CARDS+deck.NO_TRUMP_CARDS); i++)  {
 //            System.out.println(deck.cards[i].toString());
 //        }
 //        for (int i = 0; i < deck.playDeck.size(); i++)  {

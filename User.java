@@ -29,11 +29,11 @@ public class User {
         boolean confirm = false;
         while (!confirm) {
             Scanner inputDevice = new Scanner(System.in);
-            int selection = inputDevice.nextInt();
-            if (selection == 1) {
+            String selection = inputDevice.next();
+            if (selection.equals("1")) {
                 // request confimation from the user
                 System.out.println("You have selected (1) new game \n (1) confirm \n (2) return");
-                if (inputDevice.nextInt() == 1)  {
+                if (inputDevice.next().equals("1"))  {
                     confirm = true;
                     newGame();
                     // at the end of the game, return to play menu
@@ -42,19 +42,20 @@ public class User {
                 }
                 else  {displayPlayMenu();}
             }
-            else if (selection == 2) {
+            else if (selection.equals("2")) {
                 // request confimation from the user
                 System.out.println("You have selected (2) quit game \n (1) confirm \n (2) return");
-                if (inputDevice.nextInt() == 1) {
+                if (inputDevice.next().equals("1")) {
                     confirm = true;
                     quitGame();
                 }
+                // invalid selection will also return
                 else  {displayPlayMenu();}
             }
-            else if (selection == 3) {
+            else if (selection.equals("3")) {
                 // request confimation from the user
                 System.out.println("You have selected (3) game instructions \n (1) confirm \n (2) return");
-                if (inputDevice.nextInt() == 1)  {
+                if (inputDevice.next().equals("1"))  {
                     confirm = true;
                     gameInstructions();
                 }
@@ -72,14 +73,16 @@ public class User {
         while (!confirm) {
             System.out.println("The game requires 3-5 players. \nPlease enter number of players: ");
             Scanner inputDevice = new Scanner(System.in);
-            int noPlayers = inputDevice.nextInt();
-            if (!(noPlayers == 3 || noPlayers == 4 || noPlayers == 5)) {
+            String noPlayersString = inputDevice.next();
+            if (!(noPlayersString.equals("3") || noPlayersString.equals("4") || noPlayersString.equals("5"))) {
                 System.out.println("Invalid selection");
             }
             else  {
+                // convert string to int (code only accessable if string is the number 3, 4 or 5)
+                int noPlayers = Integer.parseInt(noPlayersString);
                 // request confirmation from the user
                 System.out.println("You have selected " + noPlayers + " players. \n (1) confirm \n (2) return ");
-                if (inputDevice.nextInt() == 1) {
+                if (inputDevice.next().equals("1")) {
                     confirm = true;
                     // create new game object
                     this.newGame = new Game(noPlayers);

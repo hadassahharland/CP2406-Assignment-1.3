@@ -19,45 +19,47 @@ public class AIPlayer extends Player  {
         boolean cardFound = false;
         int i = 0;
         // look for a valid play card to play
-        while (!cardFound && i < super.hand.hand.size())  {
-            if (super.hand.hand.get(i) instanceof PlayCard)  {
-                if (((PlayCard) super.hand.hand.get(i)).validPlay(lastCard, currentCategoryIndex)) {
+        while (!cardFound && i < hand.hand.size())  {
+            if (hand.hand.get(i) instanceof PlayCard)  {
+                if ((hand.hand.get(i)).validPlay(lastCard, currentCategoryIndex)) {
                     cardFound = true;
                     // put the card into play
-                    this.inPlay = super.hand.hand.get(i);
+                    this.inPlay = hand.hand.get(i);
                 }
             }
             i++;
         }
         // or look for a trump card to play
-        while (!cardFound && i < super.hand.hand.size())  {
-            if (super.hand.hand.get(i) instanceof TrumpCard)  {
+        while (!cardFound && i < hand.hand.size())  {
+            if (hand.hand.get(i) instanceof TrumpCard)  {
                 cardFound = true;
                 // put the card into play
-                this.inPlay = super.hand.hand.get(i);
+                this.inPlay = hand.hand.get(i);
             }
             i++;
         }
         // remove the card from the player's hand
-        if (cardFound)  {  super.hand.removeCard(inPlay);  }
+        if (cardFound)  {  hand.removeCard(inPlay);  }
         // if no card was found to play, player must pass
-        else  {  super.pass(); }
+        else  {
+            this.passed = true;
+        }
     }
 
     public int newRound()  {
         // AI decision: Play any play card from hand, return random int corresponding to the currentCategoryIndex
         boolean cardFound = false;
         int i = 0;
-        while (!cardFound && i < super.hand.hand.size())  {
-            if (super.hand.hand.get(i) instanceof PlayCard)  {
+        while (!cardFound && i < hand.hand.size())  {
+            if (hand.hand.get(i) instanceof PlayCard)  {
                 cardFound = true;
                 // put the card into play
-                this.inPlay = super.hand.hand.get(i);
+                this.inPlay = hand.hand.get(i);
             }
             i++;
         }
         // remove the card from the player's hand
-        super.hand.removeCard(inPlay);
+        hand.removeCard(inPlay);
         return chooseCategory();
     }
 
@@ -68,8 +70,19 @@ public class AIPlayer extends Player  {
     public int chooseCategory()  {
         // AI decision: return random int corresponding to the currentCategoryIndex
         Random rn = new Random();
-        int currentCategoryIndex = rn.nextInt(5);
-        return currentCategoryIndex;
+        return rn.nextInt(5);
+    }
+
+    public boolean magnetiteWinCondition()  {
+        // if the player has the Magnetite card in their hand, play it and win the game
+        // the card index of the Magnetite card is 45
+        for (int i = 0; i < hand.hand.size(); i++)  {
+            if (hand.hand.get(i).cardIndex == 45)  {
+                hand.winCondition = true;
+                return true;
+            }
+        }
+        return false;
     }
 }
 

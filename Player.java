@@ -9,13 +9,15 @@ public abstract class Player  {
     int playerIndex;
     String playerName;
     boolean passed;
-    boolean currentPlayer;
+    boolean winner;
+    //boolean currentPlayer;
     PlayerHand hand;
 
     public Player(int playerIndex, String playerName) {
         this.playerName = playerName;
         this.playerIndex = playerIndex;
-        this.currentPlayer = false;
+        //this.currentPlayer = false;
+        this.winner = false;
         this.hand = new PlayerHand();
     }
 
@@ -41,10 +43,20 @@ public abstract class Player  {
 
     public abstract int chooseCategory();
 
-    public void pass()  {
-        passed = true;
-        System.out.println(this.getPlayerName() + " has passed and picked up a card from the deck");
-        hand.addCard(SuperTrump.currentUser.newGame.dealCard());
-        // TODO fix dealCard null pointer exception
+    public abstract boolean magnetiteWinCondition();
+
+    public void setWinner(boolean winner) {
+        this.winner = winner;
     }
+
+    public boolean isWinner() {
+        return winner;
+    }
+
+    //    public void pass()  {
+//        passed = true;
+//        System.out.println(this.getPlayerName() + " has passed and picked up a card from the deck");
+//        hand.addCard(SuperTrump.currentUser.newGame.dealCard());
+//        // TODO fix dealCard null pointer exception
+//    }
 }
