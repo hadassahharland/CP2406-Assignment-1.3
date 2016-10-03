@@ -5,8 +5,8 @@ import java.util.Scanner;
  * This class manages user input and user functionalities for the game "Project Mineral: Super Trump"
  */
 public class User {
-    Game newGame;
-    //String userName;
+    public Game newGame;
+
     public User() {
         showWelcome();
         displayPlayMenu();
@@ -23,7 +23,7 @@ public class User {
     }
 
     public void makePlayMenuSelection() {
-        // requests a menu selection from the user and runs the corresponding method
+        /* requests a menu selection from the user and runs the corresponding method */
         boolean confirm = false;
         while (!confirm) {
             Scanner inputDevice = new Scanner(System.in);
@@ -37,29 +37,24 @@ public class User {
                     // at the end of the game, return to play menu
                     displayPlayMenu();
                     makePlayMenuSelection();
-                }
-                else  {displayPlayMenu();}
-            }
-            else if (selection.equals("2")) {
+                } else  {displayPlayMenu();}
+            } else if (selection.equals("2")) {
                 // request confimation from the user
                 System.out.println("You have selected (2) quit game \n (1) confirm \n (2) return");
                 if (inputDevice.next().equals("1")) {
                     confirm = true;
                     quitGame();
+                } else  {
+                    displayPlayMenu();                      // invalid selection will also return
                 }
-                // invalid selection will also return
-                else  {displayPlayMenu();}
-            }
-            else if (selection.equals("3")) {
+            } else if (selection.equals("3")) {
                 // request confimation from the user
                 System.out.println("You have selected (3) game instructions \n (1) confirm \n (2) return");
                 if (inputDevice.next().equals("1"))  {
                     confirm = true;
                     gameInstructions();
-                }
-                else  {displayPlayMenu();}
-            }
-            else  {
+                } else  {displayPlayMenu();}
+            } else  {
                 System.out.println("Invalid Selection");
                 displayPlayMenu();
             }
@@ -67,6 +62,7 @@ public class User {
     }
 
     public void newGame()  {
+        /* generates a new game instance */
         boolean confirm = false;
         while (!confirm) {
             System.out.println("The game requires 3-5 players. \nPlease enter number of players: ");

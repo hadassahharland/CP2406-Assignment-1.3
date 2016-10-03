@@ -8,7 +8,7 @@ import java.util.Scanner;
  */
 
 public class UserControlledPlayer extends Player {
-    Card inPlay;
+    public Card inPlay;
 
     public UserControlledPlayer(int playerIndex, String playerName)  {
         super(playerIndex, playerName);
@@ -19,21 +19,25 @@ public class UserControlledPlayer extends Player {
     }
 
     public void takeTurn(Card lastCard, int currentCategoryIndex) {
-        // User decision: play any card as indicated in hand or pass
+        /* User decision: play any card as indicated in hand or pass */
         System.out.println("The last card played was: \n" + lastCard.toString());
         System.out.println("The play category is " + Game.categories[currentCategoryIndex]);
         showHand();
-        boolean confirm = false, cardPlayed = false;
-        while (!confirm)  {
+        boolean confirm = false;
+        boolean cardPlayed = false;
+        boolean endTurn = false;
+        while (!endTurn)  {
             System.out.println("Choose a card from your hand to play, (0) to show hand or (00) to pass");
             Scanner inputDevice = new Scanner(System.in);
             String input = inputDevice.next();
-            if (input.equals("0"))  {  super.hand.show();  }
-            else if (input.equals("00"))  {
+            if (input.equals("0"))  {
+                hand.show();
                 confirm = true;
+            } else if (input.equals("00"))  {
+                confirm = true;
+                endTurn = true;
                 this.passed = true;
-            }
-            else {
+            } else {
                 for (int i = 1; i <= super.hand.hand.size(); i++) {
                     // convert index to string to compare to input
                     String index = Integer.toString(i);
@@ -43,8 +47,9 @@ public class UserControlledPlayer extends Player {
                             inPlay = super.hand.hand.get(i - 1);
                             cardPlayed = true;
                             confirm = true;
+                            endTurn = true;
                         } else {
-                            // occurs if the card selected is a play card that is not higher in the play category
+                            /* occurs if the card selected is a play card that is not higher in the play category */
                             System.out.println("The card you selected is not a valid play");
                         }
                     }
@@ -62,12 +67,15 @@ public class UserControlledPlayer extends Player {
         // User decision: By input.
         showHand();
         boolean confirm = false;
-        while (!confirm)  {
+        boolean endTurn = false;
+        while (!endTurn)  {
             System.out.println("Choose a card from your hand to play, or (0) to show hand");
             Scanner inputDevice = new Scanner(System.in);
             String input = inputDevice.next();
-            if (input.equals("0"))  {  super.hand.show();  }
-            else {
+            if (input.equals("0"))  {
+                hand.show();
+                confirm = true;
+            } else {
                 for (int i = 1; i <= super.hand.hand.size(); i++) {
                     // convert index to string to compare to input
                     String index = Integer.toString(i);
@@ -82,7 +90,7 @@ public class UserControlledPlayer extends Player {
             }
         }
         // remove the card from the player's hand
-        super.hand.removeCard(inPlay);
+        hand.removeCard(inPlay);
         return chooseCategory();
     }
 
@@ -95,8 +103,8 @@ public class UserControlledPlayer extends Player {
         boolean confirm = false;
         int currentCategoryIndex = -1;
         while (!confirm) {
-            System.out.println("Choose a play category to start: \n (1) Hardness \n (2) Specific Gravity \n (3) Cleavage " +
-                    "\n (4) Crystal Abundance \n (5) Economic Value");
+            System.out.println("Choose a play category to start: \n (1) Hardness \n (2) Specific Gravity \n (3) " +
+                    "Cleavage \n (4) Crystal Abundance \n (5) Economic Value");
             Scanner inputDevice = new Scanner(System.in);
             String input = inputDevice.next();
             if (input.equals("1")) {
@@ -122,10 +130,9 @@ public class UserControlledPlayer extends Player {
     }
 
     public boolean magnetiteWinCondition() {
-        // if the player has the Magnetite card in their hand, ask if they would like to play it and win the game
-        // the card index of the Magnetite card is 45
+        /* if the player has the Magnetite card in their hand, ask if they would like to play it and win the game */
         for (int i = 0; i < hand.hand.size(); i++) {
-            if (hand.hand.get(i).cardIndex == 45) {
+            if (hand.hand.get(i).cardIndex == 45) {                     // the card index of the Magnetite card is 45
                 System.out.println("If the Magnetite card and the Geophysicist card are played together, that player " +
                         "wins the game. You have played the Geophysicist card, and the have the Magnetite card in " +
                         "your hand. Would you like to play the Magnetite card and win the game? \n (1) yes \n (2) no");

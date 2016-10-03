@@ -8,8 +8,4 @@ public class SuperTrump {
         currentUser = new User();
 
     }
-
-    public static User getCurrentUser() {
-        return currentUser;
-    }
 }

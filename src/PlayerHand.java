@@ -16,8 +16,8 @@ public class PlayerHand {
     boolean winCondition;
 
     public PlayerHand() {
-        // create empty ArrayList in which to store Cards
-        // cards are added to the hand not at construction but in the deal() function in game
+        /* create empty ArrayList in which to store Cards */
+        /* cards are added to the hand not at construction but in the deal() function in game */
         hand = new ArrayList<>();
         this.winCondition = false;
     }
@@ -29,28 +29,13 @@ public class PlayerHand {
         }
     }
 
-//    public void removeCard(int cardIndex)  {
-//        boolean found = false;
-//        for (int i = 0; i < hand.size(); i++) {
-//            if (hand.get(i).cardIndex == cardIndex) {
-//                hand.remove(i);
-//                found = true;
-//                // Win condition is satisfied when the player's hand is empty
-//                if (hand.size() == 0) {
-//                    this.winCondition = true;
-//                }
-//            }
-//        }
-//        if (!found) {  System.out.println("The card you tried to remove is not in this player's hand.");  }
-//    }
-
     public void removeCard(Card card)  {
         boolean found = false;
         for (int i = 0; i < hand.size(); i++) {
             if (hand.get(i).cardIndex == card.cardIndex) {
                 hand.remove(i);
                 found = true;
-                // Win condition is satisfied when the player's hand is empty
+                /* Win condition is satisfied when the player's hand is empty */
                 if (hand.size() == 0) {
                     this.winCondition = true;
                 }

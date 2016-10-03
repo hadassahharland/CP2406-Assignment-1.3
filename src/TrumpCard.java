@@ -3,7 +3,7 @@
  * This class is a child class of the abstract class Card which holds properties of the trump cards in class variables.
  */
 public class TrumpCard extends Card {
-    String function;
+    public String function;
 
     public TrumpCard(int cardIndex, String fileName, String imageName, String function, String name) {
         super(cardIndex, fileName, imageName, name);
@@ -15,7 +15,7 @@ public class TrumpCard extends Card {
     }
 
     public boolean validPlay(Card lastCard, int currentCategoryIndex) {
-        // always a valid play to play a trump card
+        /* always a valid play to play a trump card */
         return true;
     }
 }

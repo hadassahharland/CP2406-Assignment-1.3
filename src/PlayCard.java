@@ -31,7 +31,7 @@ public class PlayCard extends Card {
     public boolean validPlay(Card lastCard, int currentCategoryIndex) {
         if (lastCard instanceof PlayCard) {
             PlayCard playCard = (PlayCard) lastCard;
-            // returns true if the the card is higher than the 'lastCard' in the current category
+            /* returns true if the the card is higher than the 'lastCard' in the current category */
             switch (currentCategoryIndex) {
                 case 0:
                     return splitValues(this.hardness) > splitValues(playCard.hardness);
@@ -46,47 +46,10 @@ public class PlayCard extends Card {
                 default:
                     return false;
             }
-        }
-        // validPlay always returns true for any trump card
-        else {
-            return true;
+        } else {
+            return true;                    // validPlay always returns true for any trump card
         }
     }
-//            if (currentCategoryIndex == 0) {
-//                // the category is hardness
-//                return splitValues(this.hardness) > splitValues(playCard.hardness);
-//            } else if (currentCategoryIndex == 1) {
-//                // the category is Specific Gravity
-//                if (splitValues(this.specificGravity) > splitValues(playCard.specificGravity)) {
-//                    return true;
-//                } else {
-//                    return false;
-//                }
-//            } else if (currentCategoryIndex == 2) {
-//                // the category is Cleavage
-//                if (splitCleavage(this.cleavage) > splitCleavage(playCard.cleavage)) {
-//                    return true;
-//                } else {
-//                    return false;
-//                }
-//            } else if (currentCategoryIndex == 3) {
-//                // the category is Crystal Abundance
-//                if (splitAbundance(this.crustalAbundance) > splitAbundance(playCard.crustalAbundance)) {
-//                    return true;
-//                } else {
-//                    return false;
-//                }
-//            } else {
-//                // the category is Economic Value
-//                if (splitEconomicValue(this.economicValue) > splitEconomicValue(playCard.economicValue)) {
-//                    return true;
-//                } else {
-//                    return false;
-//                }
-//
-//        }
-//
-//    }
 
     public String toString()  {
         return name + " (" + chemicalStructure + "): Hardness: " + hardness + ", Specific Gravity: " + specificGravity
@@ -95,15 +58,13 @@ public class PlayCard extends Card {
     }
 
     public double splitValues(String string) {
-        // remove all whitespace from the string
-        string = string.replaceAll("\\s+","");
-        // If the string contains a hyphen, take the value after the hyphen, else take the value. Convert to double.
+        string = string.replaceAll("\\s+","");                      // remove all whitespace from the string
+        /* If the string contains a hyphen, take the value after the hyphen, else take the value. Convert to double. */
         double higherValue;
         int index = string.indexOf('-');
         if (index == -1) {
             higherValue = Double.parseDouble(string);
-        }
-        else {
+        } else {
             String stringHigherValue = string.substring(index + 1);
             higherValue = Double.parseDouble(stringHigherValue);
         }
@@ -111,11 +72,11 @@ public class PlayCard extends Card {
     }
 
     public int splitCleavage(String string)  {
-        // cleavage comparitors have been hardcoded into an array
+        /* cleavage comparitors have been hardcoded into an array */
         String[] cleavageValues = {"none", "poor/none", "1 poor", "2 poor", "1 good", "1 good, 1 poor", "2 good",
                 "3 good", "1 perfect", "1 perfect, 1 good", "1 perfect, 2 good", "2 perfect, 1 good", "3 perfect",
                 "4 perfect", "6 perfect"};
-        // returns the index of the array at which the string was found, or -1 if it was not found
+        /* returns the index of the array at which the string was found, or -1 if it was not found */
         for (int i = 0; i < cleavageValues.length; i++)  {
             if (string.equals(cleavageValues[i]))  {  return i;  }
         }
@@ -124,9 +85,9 @@ public class PlayCard extends Card {
     }
 
     public int splitAbundance(String string)  {
-        // crustal abundance comparitors have been hardcoded into an array
+        /* crustal abundance comparitors have been hardcoded into an array */
         String[] crustalAbundanceValues = {"ultratrace", "trace", "low", "moderate", "high", "very high"};
-        // returns the index of the array at which the string was found, or -1 if it was not found
+        /* returns the index of the array at which the string was found, or -1 if it was not found */
         for (int i = 0; i < crustalAbundanceValues.length; i++)  {
             if (string.equals(crustalAbundanceValues[i]))  {  return i;  }
         }
@@ -135,9 +96,9 @@ public class PlayCard extends Card {
     }
 
     public int splitEconomicValue(String string)  {
-        // Economic value comparitors have been hardcoded into an array
+        /* Economic value comparitors have been hardcoded into an array */
         String[] economicValueValues = {"trivial", "low", "moderate", "high", "very high", "I'm rich!"};
-        // returns the index of the array at which the string was found, or -1 if it was not found
+        /* returns the index of the array at which the string was found, or -1 if it was not found */
         for (int i = 0; i < economicValueValues.length; i++)  {
             if (string.equals(economicValueValues[i]))  {  return i;  }
         }
