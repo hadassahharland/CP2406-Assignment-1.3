@@ -61,8 +61,8 @@ public class Game {
     public void buildPlayersArray() {
         players = new Player[noPlayers];
         int playerIndex;
-        players[0] = buildPlayers(0,false);               // first player is not user: all AI
-//        players[0] = buildPlayers(0, true);               // first player is user
+//        players[0] = buildPlayers(0,false);               // first player is not user: all AI
+        players[0] = buildPlayers(0, true);               // first player is user
         for (playerIndex = 1; playerIndex < noPlayers; playerIndex++) {
             players[playerIndex] = buildPlayers(playerIndex, false);
         }
