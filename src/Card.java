@@ -1,5 +1,3 @@
-package src;
-
 /**
  * Created by Hadassah on 21/09/2016.
  *

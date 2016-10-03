@@ -1,6 +1,4 @@
-package src;
-
-import static jdk.nashorn.internal.objects.ArrayBufferView.length;
+//import static jdk.nashorn.internal.objects.ArrayBufferView.length;
 
 /**
  * Created by Hadassah on 25/09/2016.

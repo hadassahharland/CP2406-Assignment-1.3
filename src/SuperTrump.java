@@ -1,5 +1,3 @@
-package src;
-
 /**
  * Created by Hadassah Harland on 21/09/2016.
  * This class generates objects and interprets user commands for "Project Mineral: Super Trumps"

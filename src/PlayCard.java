@@ -1,5 +1,3 @@
-package src;
-
 /**
  * Created by Hadassah on 25/09/2016.
  * This class is a child class of the abstract class Card which holds properties of the play cards in class variables.

@@ -1,5 +1,3 @@
-package src;
-
 /**
  * Created by Hadassah Harland on 21/09/2016.
  * This abstract class parents the AI and User-Controlled Player classes for "Project Mineral: Super Trump"
