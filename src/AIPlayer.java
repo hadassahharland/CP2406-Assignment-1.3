@@ -37,6 +37,9 @@ public class AIPlayer extends Player  {
         }
         if (cardFound)  {
             hand.removeCard(inPlay);                                // remove the card from the player's hand
+            if (hand.hand.isEmpty())  {
+                hand.winCondition = true;
+            }
         } else  {
             this.passed = true;                                     // if no card was found to play, pass
         }
@@ -53,7 +56,14 @@ public class AIPlayer extends Player  {
             }
             i++;
         }
+        // hand has at least one card
+        if (!cardFound)  {
+            this.inPlay = hand.hand.get(0);
+        }
         hand.removeCard(inPlay);                                    // remove the card from the player's hand
+        if (hand.hand.isEmpty()) {                                  // check if hand is empty
+            hand.winCondition = true;
+        }
         return chooseCategory();
     }
 

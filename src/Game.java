@@ -20,18 +20,20 @@ public class Game {
     private int roundNo;
     private int noPlayers;
     private ArrayList<Card> discardPile;
+    private boolean endOfGame;
 
     public Game(int noPlayers) {
         startGame(noPlayers);
         playGame();
-        endGame();
     }
 
     public void startGame(int noPlayers)  {
         this.noPlayers = noPlayers;
         this.winners = new String[noPlayers];
         this.playersOut = 0;
+        this.endOfGame = false;
         this.roundNo = 0;
+        discardPile = new ArrayList<>();
         buildPlayersArray();
         assignDealer(players);
         this.deck = new Deck();
@@ -45,6 +47,7 @@ public class Game {
     public void endGame()  {
         System.out.println("The game has ended.");
         pronounceWinners();
+
     }
 
     public void assignDealer(Player[] players) {
@@ -58,7 +61,8 @@ public class Game {
     public void buildPlayersArray() {
         players = new Player[noPlayers];
         int playerIndex;
-        players[0] = buildPlayers(0, true);               // first player is user
+        players[0] = buildPlayers(0,false);               // first player is not user: all AI
+//        players[0] = buildPlayers(0, true);               // first player is user
         for (playerIndex = 1; playerIndex < noPlayers; playerIndex++) {
             players[playerIndex] = buildPlayers(playerIndex, false);
         }
@@ -107,16 +111,16 @@ public class Game {
     }
 
     public void pronounceWinners()  {
-        String winnerStatement = "The winner is " + this.winners[0];
-        String loserStatement = ", and the loser is " + this.winners[noPlayers-1];
+        String winnerStatement = "The winner is " + winners[0];
+        String loserStatement = ", and the loser is " + winners[players.length-1];
         String runnerUpStatement;
         if (players.length == 3)  {
-            runnerUpStatement = ", the runner up is " + this.winners[1];
+            runnerUpStatement = ", the runner up is " + winners[1];
         } else if  (players.length == 4)  {
-            runnerUpStatement = ", the runner ups are " + this.winners[1] + " and " + this.winners[2];
+            runnerUpStatement = ", the runner ups are " + winners[1] + " and " + winners[2];
         } else  {
-            runnerUpStatement = ", the runner ups are " + this.winners[1] + ", " + this.winners[2] + " and "
-                    + this.winners[3];
+            runnerUpStatement = ", the runner ups are " + winners[1] + ", " + winners[2] + " and "
+                    + winners[3];
         }
         System.out.println(winnerStatement + runnerUpStatement + loserStatement);
     }
@@ -199,7 +203,9 @@ public class Game {
                 System.out.println(players[currentPlayerIndex].getPlayerName() + " has played the Geophysicist card " +
                         "and the Magnetite card and so has won.");
                 checkWinners();
-                newRound();
+                if (!endOfGame)  {
+                    newRound();
+                }
             }
         } else if (card.cardIndex == 59)  {                             // the Geologist: Player to choose category
             currentCategoryIndex = players[currentPlayerIndex].chooseCategory();
@@ -217,18 +223,24 @@ public class Game {
     }
 
     public void checkWinners()  {
-        for (int i = 0; i < noPlayers; i++)  {
-            if (players[i].hand.winCondition)  {                        // if the win condition is true, set winner
+        for (int i = 0; i < players.length; i++)  {
+            // if the win condition is true, and the winner not already set, set winner
+            if ((players[i].hand.winCondition) && (!players[i].isWinner()))  {
                 // add to winners
                 winners[playersOut] = players[i].getPlayerName();
+                System.out.println(players[i].getPlayerName() + " has won");
                 players[i].setWinner(true);
                 playersOut++;
                 noPlayers--;
                 if (noPlayers == 1)  {                                  // last player is the loser
                     for (int j = 0; j < players.length; j++) {
-                        if (!players[j].isWinner()) {  winners[winners.length - 1] = players[j].getPlayerName(); }
+                        if (!players[j].hand.winCondition) {            // identify last player
+                            winners[winners.length - 1] = players[j].getPlayerName();
+                            endOfGame = true;
+                            endGame();
+                        }
                     }
-                    endGame();
+
                 }
             }
         }
@@ -243,17 +255,22 @@ public class Game {
                 playersIn--;
             } else  { nextPlayer = players[i]; }
         }
-        if (playersIn == 1)  {
+        if (playersIn == 1) {
             /* New round is started by the player who had not passed */
             currentPlayerIndex = nextPlayer.playerIndex;
-            newRound(); }
+            if (!endOfGame) {
+                newRound();
+            }
+        }
     }
 
     public void endOfTurn()  {
         checkWinners();
         checkPassed();
         nextCurrentPlayer();
-        newTurn();
+        if (!endOfGame)  {
+            newTurn();
+        }
     }
 
     public void newTurn() {
@@ -263,6 +280,7 @@ public class Game {
         if (players[currentPlayerIndex].isPassed()) {
             System.out.println(players[currentPlayerIndex].getPlayerName() + " has passed and picked up a card from " +
                     "the deck");
+            checkDeck();
             Card card = deck.playDeck.get(0);                       // take the first card in the deck
             deck.playDeck.remove(card);                             // remove that card from the deck
             checkDeck();
@@ -275,7 +293,7 @@ public class Game {
 
     public void checkDeck()  {
         /* if the deck is empty, shuffle the discard pile into the deck */
-        if (deck.playDeck.size() == 0)  {
+        if (deck.playDeck.isEmpty())  {
             deck.playDeck = discardPile;
             Collections.shuffle(deck.playDeck);
         }

@@ -43,10 +43,10 @@ public class UserControlledPlayer extends Player {
                     String index = Integer.toString(i);
                     if (input.equals(index)) {
                         Card card = super.hand.hand.get(i - 1);
+                        confirm = true;
                         if (card.validPlay(lastCard, currentCategoryIndex)) {
                             inPlay = super.hand.hand.get(i - 1);
                             cardPlayed = true;
-                            confirm = true;
                             endTurn = true;
                         } else {
                             /* occurs if the card selected is a play card that is not higher in the play category */
@@ -82,6 +82,7 @@ public class UserControlledPlayer extends Player {
                     if (input.equals(index)) {
                         inPlay = super.hand.hand.get(i - 1);
                         confirm = true;
+                        endTurn = true;
                     }
                 }
                 if (!confirm) {
