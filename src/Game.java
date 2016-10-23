@@ -16,19 +16,21 @@ public class Game {
     public int currentCategoryIndex;
     public Card lastCard;
     private String[] winners;
+    private String[] playerNames;
     private int playersOut;
     private int roundNo;
     private int noPlayers;
     private ArrayList<Card> discardPile;
     private boolean endOfGame;
 
-    public Game(int noPlayers) {
-        startGame(noPlayers);
+    public Game(String[] playerNames) {
+        startGame(playerNames);
         playGame();
     }
 
-    public void startGame(int noPlayers)  {
-        this.noPlayers = noPlayers;
+    public void startGame(String[] playerNames)  {
+        this.noPlayers = playerNames.length;
+        this.playerNames = playerNames;
         this.winners = new String[noPlayers];
         this.playersOut = 0;
         this.endOfGame = false;
@@ -45,7 +47,7 @@ public class Game {
     }
 
     public void endGame()  {
-        System.out.println("The game has ended.");
+        SuperTrumpGUI.Message("The game has ended.");
         pronounceWinners();
 
     }
@@ -54,14 +56,13 @@ public class Game {
         // generate a random integer corresponding to a player index
         Random rn = new Random();
         int dealerIndex = rn.nextInt(players.length);
-        System.out.println("The dealer is " + players[dealerIndex].getPlayerName());
+        SuperTrumpGUI.Message("The dealer is " + players[dealerIndex].getPlayerName());
         this.currentPlayerIndex = dealerIndex;
     }
 
     public void buildPlayersArray() {
         players = new Player[noPlayers];
         int playerIndex;
-//        players[0] = buildPlayers(0,false);               // first player is not user: all AI
         players[0] = buildPlayers(0, true);               // first player is user
         for (playerIndex = 1; playerIndex < noPlayers; playerIndex++) {
             players[playerIndex] = buildPlayers(playerIndex, false);
@@ -69,17 +70,7 @@ public class Game {
     }
 
     public Player buildPlayers(int playerIndex, boolean isUser) {
-        System.out.println("Please enter player" + (playerIndex + 1) + "'s name, or (1) to assign the computer " +
-                "default");
-        Scanner inputDevice = new Scanner(System.in);
-        String userInput = inputDevice.next();
-        String playerName;
-        if (userInput.equals("1")) {
-            playerName = "Player" + (playerIndex + 1);
-        }
-        else {
-            playerName = userInput;
-        }
+        String playerName = playerNames[playerIndex];
         if (!isUser) {
             return new AIPlayer(playerIndex, playerName);
         } else {
@@ -110,6 +101,14 @@ public class Game {
         nextCurrentPlayer();
     }
 
+    public PlayerHand getPlayerHand(int playerIndex)  {
+        return players[playerIndex].hand;
+    }
+
+    public Player getPlayer(int playerIndex)  {
+        return players[playerIndex];
+    }
+
     public void pronounceWinners()  {
         String winnerStatement = "The winner is " + winners[0];
         String loserStatement = ", and the loser is " + winners[players.length-1];
@@ -122,7 +121,7 @@ public class Game {
             runnerUpStatement = ", the runner ups are " + winners[1] + ", " + winners[2] + " and "
                     + winners[3];
         }
-        System.out.println(winnerStatement + runnerUpStatement + loserStatement);
+        SuperTrumpGUI.Message(winnerStatement + runnerUpStatement + loserStatement);
     }
 
     public void nextCurrentPlayer()  {
@@ -130,7 +129,7 @@ public class Game {
         // if the current player is
         while ((players[currentPlayerIndex].isPassed()) || (players[currentPlayerIndex].isWinner()))  {
             if (players[currentPlayerIndex].isPassed()) {
-                System.out.println(players[currentPlayerIndex].getPlayerName() + " has passed until the end of the round.");
+                SuperTrumpGUI.Message(players[currentPlayerIndex].getPlayerName() + " has passed until the end of the round.");
             }
             currentPlayerIndex = ((currentPlayerIndex + 1)% players.length);
         }
@@ -139,12 +138,12 @@ public class Game {
     public void newRound() {
         roundNo++;
         // declare new round
-        System.out.println("New round: Round " + roundNo);
+        SuperTrumpGUI.Message("New round: Round " + roundNo);
         // set all players passed status to false
         for (int i = 0; i < players.length; i++)  {  players[i].setPassed(false); }
-        System.out.println("It is " + players[currentPlayerIndex].getPlayerName() + "'s turn to start the round. ");
+        SuperTrumpGUI.Message("It is " + players[currentPlayerIndex].getPlayerName() + "'s turn to start the round. ");
         this.currentCategoryIndex = players[currentPlayerIndex].newRound();
-        System.out.println(players[currentPlayerIndex].getPlayerName() + " has chosen the play category to be "
+        SuperTrumpGUI.Message(players[currentPlayerIndex].getPlayerName() + " has chosen the play category to be "
                 + categories[currentCategoryIndex]);
         playCard(players[currentPlayerIndex].getInPlay());
         endOfTurn();
@@ -155,9 +154,13 @@ public class Game {
         discardPile.add(card);
         if (card instanceof PlayCard) {
             playCard((PlayCard) card);
-        } else  {
+        } else if (card instanceof TrumpCard) {
             playCard((TrumpCard) card);
         }
+    }
+
+    public Deck getDeck() {
+        return deck;
     }
 
     public void playCard(PlayCard card)  {
@@ -182,7 +185,7 @@ public class Game {
             currentCategory = "economic value";
             categoryValue = card.economicValue;
         }
-        System.out.println(players[currentPlayerIndex].getPlayerName() + " has played a card: \n" + card.name + ", "
+        SuperTrumpGUI.Message(players[currentPlayerIndex].getPlayerName() + " has played a card: \n" + card.name + ", "
                 + currentCategory + ", " + categoryValue);
     }
 
@@ -200,7 +203,7 @@ public class Game {
             currentCategoryIndex = 1;
             /* If a player throws the Geophysicist card together with the Magnetite card, then that player wins */
             if (players[currentPlayerIndex].magnetiteWinCondition())  {
-                System.out.println(players[currentPlayerIndex].getPlayerName() + " has played the Geophysicist card " +
+                SuperTrumpGUI.Message(players[currentPlayerIndex].getPlayerName() + " has played the Geophysicist card " +
                         "and the Magnetite card and so has won.");
                 checkWinners();
                 if (!endOfGame)  {
@@ -210,14 +213,14 @@ public class Game {
         } else if (card.cardIndex == 59)  {                             // the Geologist: Player to choose category
             currentCategoryIndex = players[currentPlayerIndex].chooseCategory();
         } else {
-            System.out.println("An error has occurred, this is not a Trump Card");
+            SuperTrumpGUI.Message("An error has occurred, this is not a Trump Card");
         }
         // declare new round
         roundNo++;
-        System.out.println("A trump card was played! \nNew round: Round " + roundNo);
+        SuperTrumpGUI.Message("A trump card was played! \nNew round: Round " + roundNo);
         // set all players passed status to false
         for (int i = 0; i < players.length; i++)  {  players[i].setPassed(false); }
-        System.out.println(players[currentPlayerIndex].getPlayerName() + " has played a card: \n"
+        SuperTrumpGUI.Message(players[currentPlayerIndex].getPlayerName() + " has played a card: \n"
                 + card.toString() + "\nThe play category is now " + categories[currentCategoryIndex]);
         this.lastCard = card;
     }
@@ -228,7 +231,7 @@ public class Game {
             if ((players[i].hand.winCondition) && (!players[i].isWinner()))  {
                 // add to winners
                 winners[playersOut] = players[i].getPlayerName();
-                System.out.println(players[i].getPlayerName() + " has won");
+                SuperTrumpGUI.Message(players[i].getPlayerName() + " has won");
                 players[i].setWinner(true);
                 playersOut++;
                 noPlayers--;
@@ -274,13 +277,17 @@ public class Game {
     }
 
     public void newTurn() {
-        System.out.println("It is now " + players[currentPlayerIndex].getPlayerName() + "'s turn ");
+        SuperTrumpGUI.Message("It is now " + players[currentPlayerIndex].getPlayerName() + "'s turn ");
         players[currentPlayerIndex].takeTurn(lastCard, currentCategoryIndex);
         /* if the player has passed on this turn the boolean is true */
         if (players[currentPlayerIndex].isPassed()) {
-            System.out.println(players[currentPlayerIndex].getPlayerName() + " has passed and picked up a card from " +
+            SuperTrumpGUI.Message(players[currentPlayerIndex].getPlayerName() + " has passed and picked up a card from " +
                     "the deck");
-            checkDeck();
+            while (deck.playDeck.isEmpty())  {
+                SuperTrumpGUI.Message("The Deck has been reshuffled");
+                System.out.println(discardPile.size());
+                checkDeck();
+            }
             Card card = deck.playDeck.get(0);                       // take the first card in the deck
             deck.playDeck.remove(card);                             // remove that card from the deck
             checkDeck();

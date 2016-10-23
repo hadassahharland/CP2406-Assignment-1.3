@@ -25,12 +25,13 @@ public class Deck {
         /* for each set of card details in the file, create a card object and store in an array of 60 card objects */
         cards = new Card[(NO_PLAY_CARDS + NO_TRUMP_CARDS)];
         loadFromFile();
+        //SuperTrumpGUI.loadCardImages();
         shuffleDeck();
     }
 
     public void loadFromFile() {
         FileSystem fs = FileSystems.getDefault();
-        String path = "C:\\Users\\jc320890\\Documents\\CP2406-Assignment-1.3\\playCards.txt";
+        String path = "playCards.txt";
         Path file = fs.getPath(path);
         InputStream input;
 
@@ -61,7 +62,7 @@ public class Deck {
                     temp[8], temp[9], temp[10], temp[11], temp[12]);
         }
 
-        String path2 = "C:\\Users\\jc320890\\Documents\\CP2406-Assignment-1.3\\trumpCards.txt";
+        String path2 = "trumpCards.txt";
         Path file2 = fs.getPath(path2);
 
 
