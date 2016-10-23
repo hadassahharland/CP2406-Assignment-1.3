@@ -62,11 +62,14 @@ public class UserControlledPlayer extends Player {
 //        if (cardPlayed)  {  super.hand.removeCard(inPlay); }
     }
 
-    public int newRound()  {
+    public void newRound()  {
         /*User decision: choose a play category and play any card as indicated in hand or pass */
         SuperTrumpGUI.message("Choose a play category");
         SuperTrumpGUI.window.playerNewRound();
-        return SuperTrumpGUI.window.getCategoryIndex();
+    }
+
+    public void newRoundEnd()  {
+        //Game.newRoundEnd();
     }
 
         // User decision: By input.

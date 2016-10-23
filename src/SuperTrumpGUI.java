@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListener {
     public static SuperTrumpGUI window;
     public static Game newGame;
-    public static boolean yesSelection;
+    public static boolean yesSelection, turnHad, selected, newRound;
     public Card lastCard;
     public Card inPlay;
     public int currentCategoryIndex;
@@ -26,12 +26,12 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
     private static JTextField player1Name, player2Name, player3Name, player4Name, player5Name;
     private String[] playerNames;
     private boolean isInGame;
-    private static final int DIALOGUE_NO = 10;
+    private static final int DIALOGUE_NO = 18;
     private static JLabel[] cardImages;
     private int instructImageIndex, categorySelection;
     private ArrayList<JLabel> playerHandView;
     private static ArrayList<String> messages;
-    private static final Dimension DIM = new Dimension(900,640);
+    private static final Dimension DIM = new Dimension(1400,1000);
     private static final Font HEADING = new Font("Century",Font.BOLD, 22);
     private static final Font BUTTONS = HEADING.deriveFont(12);
     private static final Font LABELS = HEADING.deriveFont(Font.PLAIN,12);
@@ -142,8 +142,13 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
             tempMenu();
         }
         if (source == pass)  {
-
-            // TODO pass
+            Game.players[0].setPassed(true);
+            turnHad = true;
+            if (newRound && selected)  {
+                continueNewRound();
+            } else if (!newRound)  {
+                continueNewTurn();
+            }
         }
         if (source == viewHand)  {
             viewHand();
@@ -158,8 +163,12 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
             yesSelection = false;
         }
         if (source == select)  {
-            categorySelection = chooseCategory.getSelectedIndex();
-
+            Game.setCurrentCategoryIndex(chooseCategory.getSelectedIndex());
+            selected = true;
+            System.out.println("Selected!");
+            if (turnHad)  {
+                continueNewRound();
+            }
         }
     }
 
@@ -168,7 +177,17 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
         Object source = e.getSource();
         for (int i = 0; i < playerHandView.size(); i++)  {
             if (source == playerHandView.get(i))  {
-                UserPlayed(newGame.getPlayerHand(0).hand.get(i));
+                turnHad = true;
+                if (newGame.getPlayerHand(0).hand.get(i).validPlay(lastCard,currentCategoryIndex)) {
+                    inPlay = newGame.getPlayerHand(0).hand.get(i);
+                    newGame.players[0].setInPlay(inPlay);
+                    refreshGameGUI("Blank");
+                    if (newRound)  {
+                        continueNewRound();
+                    } else {
+                        continueNewTurn();
+                    }
+                }
             }
         }
     }
@@ -259,6 +278,8 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
         invalidate();
         validate();
         repaint();
+
+        newGame.playGame();
     }
 
     private void retrieveNoPlayers()  {
@@ -305,9 +326,9 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
             con.add(returnToMenu, BorderLayout.WEST);
         }
 
-        // Retrieve Instruction Image from file and Scale to Window
+        // Retrieve Instruction Image from file and scale to Window
         ImageIcon icon = new ImageIcon("Images\\" + instructImageDetail[instructImageIndex]);
-        instructImage = new JLabel(Scale(icon, 600, 700));
+        instructImage = new JLabel(scale(icon, 600, 700));
         con.add(instructImage, BorderLayout.CENTER);
 
         // Next Button
@@ -332,9 +353,9 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
                 menu();
             }
         } else {
-            // Retrieve Instruction Image from file and Scale to Window
+            // Retrieve Instruction Image from file and scale to Window
             ImageIcon icon = new ImageIcon("Images\\" + instructImageDetail[instructImageIndex]);
-            instructImage.setIcon(Scale(icon, 600, 700));
+            instructImage.setIcon(scale(icon, 600, 700));
         }
 
         invalidate();
@@ -343,7 +364,7 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
 
     }
 
-    private ImageIcon Scale(ImageIcon icon, int dim1, int dim2)  {
+    private static ImageIcon scale(ImageIcon icon, int dim1, int dim2)  {
         // Returns an ImageIcon re-scaled to the specified size
         Image image = icon.getImage();
         Image scaled = image.getScaledInstance(dim1, dim2,  java.awt.Image.SCALE_SMOOTH);
@@ -420,7 +441,7 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
         con.add(backtoGame);
 
         playerHandView = new ArrayList<>();
-        for (int i = 0; i > newGame.getPlayerHand(0).hand.size(); i++)  {
+        for (int i = 0; i < newGame.getPlayerHand(0).hand.size(); i++)  {
             int cardIndex = newGame.getPlayerHand(0).hand.get(i).cardIndex;
             JLabel cardIm = cardImages[cardIndex];
             cardIm.addMouseListener(this);
@@ -428,6 +449,26 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
             con.add(playerHandView.get(i));
         }
 
+        invalidate();
+        validate();
+        repaint();
+    }
+
+    public void endGame(String winStatement)  {
+        con.removeAll();
+        con.setLayout(new BorderLayout());
+
+        // Win Statement
+        JLabel winLabel = new JLabel(winStatement);
+        winLabel.setFont(HEADING);
+        con.add(winLabel, BorderLayout.CENTER);
+
+        // Back to Menu
+        con.add(returnToMenu, BorderLayout.SOUTH);
+
+        invalidate();
+        validate();
+        repaint();
     }
 
     private void tempMenu()  {
@@ -454,6 +495,7 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
     }
 
     public void playerTurn(Card lastCard, int currentCategoryIndex, String option)  {
+        newRound = false;
         this.lastCard = lastCard;
         this.currentCategoryIndex = currentCategoryIndex;
         refreshGameGUI(option);
@@ -514,7 +556,11 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
         con.add(pass);
 
         // Saved Space
-        blankSpace(option);
+        if (newRound && !selected)  {
+            blankSpace("Category");
+        } else {
+            blankSpace(option);
+        }
 
         // Temp menu Button
         con.add(tempMenu);
@@ -526,7 +572,7 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
 
     public static void message(String message)  {
         System.out.println(message);
-        if (messages.size() > DIALOGUE_NO)  {
+        while (messages.size() >= DIALOGUE_NO)  {
             // Remove earliest message
             messages.remove(0);
         }
@@ -537,7 +583,7 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
         int noCards = newGame.deck.cards.length;
         cardImages = new JLabel[noCards];
         for (int i = 0; i < noCards; i++)  {
-            cardImages[i] = new JLabel(new ImageIcon("Images\\" + newGame.deck.cards[i].fileName));
+            cardImages[i] = new JLabel(scale(new ImageIcon("Images\\" + newGame.deck.cards[i].fileName),240,360));
         }
     }
 
@@ -575,13 +621,23 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
         refreshGameGUI("YesNo");
     }
 
-    public void UserPlayed(Card card)  {
-        if (card.validPlay(lastCard,currentCategoryIndex))  {
-            inPlay = card;
+    public void playerNewRound()  {
+        newRound = true;
+        requestCategory();
+    }
+
+    public void aiNewRound()  {
+        newGame.newRoundEnd();
+    }
+
+    public void continueNewRound()  {
+        if (turnHad && selected)  {
+            Game.players[0].setInPlay(inPlay);
+            newGame.newRoundEnd();
         }
     }
 
-    public void playerNewRound()  {
-        requestCategory();
+    public void continueNewTurn()  {
+        newGame.newTurnEnd();
     }
 }

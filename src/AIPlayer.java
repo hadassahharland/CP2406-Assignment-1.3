@@ -43,9 +43,15 @@ public class AIPlayer extends Player  {
         } else  {
             this.passed = true;                                     // if no card was found to play, pass
         }
+        SuperTrumpGUI.window.continueNewTurn();
     }
 
-    public int newRound()  {
+    @Override
+    public void setInPlay(Card card) {
+        this.inPlay = card;
+    }
+
+    public void newRound()  {
         /* AI decision: Play any play card from hand, return random int corresponding to the currentCategoryIndex */
         boolean cardFound = false;
         int i = 0;
@@ -64,7 +70,12 @@ public class AIPlayer extends Player  {
         if (hand.hand.isEmpty()) {                                  // check if hand is empty
             hand.winCondition = true;
         }
-        return chooseCategory();
+        Game.setCurrentCategoryIndex(chooseCategory());
+        SuperTrumpGUI.window.aiNewRound();
+    }
+
+    public void newRoundEnd()  {
+
     }
 
     public Card getInPlay() {

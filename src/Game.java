@@ -11,8 +11,8 @@ public class Game {
     static String[] categories = {"hardness", "specific gravity", "cleavage", "crustal abundance", "economic value"};
     public Deck deck;
     public static Player[] players;
-    public int currentPlayerIndex;
-    public int currentCategoryIndex;
+    public static int currentPlayerIndex;
+    public static int currentCategoryIndex;
     public Card lastCard;
     private String[] winners;
     private String[] playerNames;
@@ -24,7 +24,6 @@ public class Game {
 
     public Game(String[] playerNames) {
         startGame(playerNames);
-        //playGame();
     }
 
     public void startGame(String[] playerNames)  {
@@ -47,8 +46,19 @@ public class Game {
 
     public void endGame()  {
         SuperTrumpGUI.message("The game has ended.");
-        pronounceWinners();
+        String winStatement;
+        if (deck.playDeck.isEmpty())  {
+            winStatement = "The game ended as we have run out of cards";
+        } else {
+            winStatement = pronounceWinners();
+        }
+        SuperTrumpGUI.window.endGame(winStatement);
 
+
+    }
+
+    public static void setCurrentCategoryIndex(int index) {
+        currentCategoryIndex = index;
     }
 
     public void assignDealer(Player[] players) {
@@ -112,7 +122,7 @@ public class Game {
         return players[playerIndex];
     }
 
-    public void pronounceWinners()  {
+    public String pronounceWinners()  {
         String winnerStatement = "The winner is " + winners[0];
         String loserStatement = ", and the loser is " + winners[players.length-1];
         String runnerUpStatement;
@@ -125,6 +135,7 @@ public class Game {
                     + winners[3];
         }
         SuperTrumpGUI.message(winnerStatement + runnerUpStatement + loserStatement);
+        return winnerStatement + runnerUpStatement + loserStatement;
     }
 
     public void nextCurrentPlayer()  {
@@ -143,9 +154,14 @@ public class Game {
         // declare new round
         SuperTrumpGUI.message("New round: Round " + roundNo);
         // set all players passed status to false
-        for (int i = 0; i < players.length; i++)  {  players[i].setPassed(false); }
+        for (int i = 0; i < players.length; i++) {
+            players[i].setPassed(false);
+        }
         SuperTrumpGUI.message("It is " + players[currentPlayerIndex].getPlayerName() + "'s turn to start the round. ");
-        this.currentCategoryIndex = players[currentPlayerIndex].newRound();
+        players[currentPlayerIndex].newRound();
+    }
+
+    public void newRoundEnd()  {
         SuperTrumpGUI.message(players[currentPlayerIndex].getPlayerName() + " has chosen the play category to be "
                 + categories[currentCategoryIndex]);
         playCard(players[currentPlayerIndex].getInPlay());
@@ -282,6 +298,9 @@ public class Game {
     public void newTurn() {
         SuperTrumpGUI.message("It is now " + players[currentPlayerIndex].getPlayerName() + "'s turn ");
         players[currentPlayerIndex].takeTurn(lastCard, currentCategoryIndex);
+    }
+
+    public void newTurnEnd()  {
         /* if the player has passed on this turn the boolean is true */
         if (players[currentPlayerIndex].isPassed()) {
             SuperTrumpGUI.message(players[currentPlayerIndex].getPlayerName() + " has passed and picked up a card from " +
@@ -305,7 +324,7 @@ public class Game {
             Collections.shuffle(deck.playDeck);
             if (deck.playDeck.isEmpty())  {
                 SuperTrumpGUI.message("No more Cards");
-                System.exit(1);
+                endGame();
             }
         }
     }

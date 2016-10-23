@@ -33,11 +33,13 @@ public abstract class Player {
         this.passed = passed;
     }
 
-    public abstract int newRound();
+    public abstract void newRound();
 
     public abstract void takeTurn(Card lastCard, int currentCategoryIndex);
 
     public abstract Card getInPlay();
+
+    public abstract void setInPlay(Card card);
 
     public abstract int chooseCategory();
 
