@@ -110,8 +110,8 @@ public class UserControlledPlayer extends Player {
         this.inPlay = card;
     }
 
-    public int chooseCategory() {
-        return 2;
+    public void chooseCategory() {
+        SuperTrumpGUI.window.requestCategory();
     }
 //        // Determine play category from user input
 //        boolean confirm = false;

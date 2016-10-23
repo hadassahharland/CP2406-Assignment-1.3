@@ -45,6 +45,7 @@ public class Game {
     }
 
     public void endGame()  {
+        endOfGame = true;
         SuperTrumpGUI.message("The game has ended.");
         String winStatement;
         if (deck.playDeck.isEmpty())  {
@@ -230,7 +231,7 @@ public class Game {
                 }
             }
         } else if (card.cardIndex == 59)  {                             // the Geologist: Player to choose category
-            currentCategoryIndex = players[currentPlayerIndex].chooseCategory();
+            currentCategoryIndex = players[currentPlayerIndex].categoryChoice;
         } else {
             SuperTrumpGUI.message("An error has occurred, this is not a Trump Card");
         }

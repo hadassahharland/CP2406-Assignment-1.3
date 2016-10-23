@@ -164,6 +164,7 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
         }
         if (source == select)  {
             Game.setCurrentCategoryIndex(chooseCategory.getSelectedIndex());
+            newGame.players[0].categoryChoice = chooseCategory.getSelectedIndex();
             selected = true;
             System.out.println("Selected!");
             if (turnHad)  {
@@ -180,6 +181,7 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
                 turnHad = true;
                 if (newGame.getPlayerHand(0).hand.get(i).validPlay(lastCard,currentCategoryIndex)) {
                     inPlay = newGame.getPlayerHand(0).hand.get(i);
+                    newGame.getPlayerHand(0).hand.remove(i);
                     newGame.players[0].setInPlay(inPlay);
                     refreshGameGUI("Blank");
                     if (newRound)  {
@@ -633,11 +635,19 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
     public void continueNewRound()  {
         if (turnHad && selected)  {
             Game.players[0].setInPlay(inPlay);
+            resetBooleans();
             newGame.newRoundEnd();
         }
     }
 
     public void continueNewTurn()  {
+        resetBooleans();
         newGame.newTurnEnd();
+    }
+
+    private void resetBooleans()  {
+        turnHad = false;
+        selected = false;
+        newRound = false;
     }
 }

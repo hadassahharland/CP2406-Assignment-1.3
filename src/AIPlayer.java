@@ -70,7 +70,8 @@ public class AIPlayer extends Player  {
         if (hand.hand.isEmpty()) {                                  // check if hand is empty
             hand.winCondition = true;
         }
-        Game.setCurrentCategoryIndex(chooseCategory());
+        chooseCategory();
+        Game.setCurrentCategoryIndex(categoryChoice);
         SuperTrumpGUI.window.aiNewRound();
     }
 
@@ -82,10 +83,10 @@ public class AIPlayer extends Player  {
         return inPlay;
     }
 
-    public int chooseCategory()  {
+    public void chooseCategory()  {
         /* AI decision: return random int corresponding to the currentCategoryIndex */
         Random rn = new Random();
-        return rn.nextInt(5);
+        categoryChoice = rn.nextInt(5);
     }
 
     public boolean magnetiteWinCondition()  {

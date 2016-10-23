@@ -5,6 +5,7 @@
 
 public abstract class Player {
     public int playerIndex;
+    public int categoryChoice;
     public String playerName;
     public boolean passed;
     public boolean winner;
@@ -41,7 +42,7 @@ public abstract class Player {
 
     public abstract void setInPlay(Card card);
 
-    public abstract int chooseCategory();
+    public abstract void chooseCategory();
 
     public abstract boolean magnetiteWinCondition();
 
