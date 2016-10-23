@@ -458,15 +458,15 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
 
     public void endGame(String winStatement)  {
         con.removeAll();
-        con.setLayout(new BorderLayout());
+        con.setLayout(new GridLayout(3,1));
 
         // Win Statement
         JLabel winLabel = new JLabel(winStatement);
         winLabel.setFont(HEADING);
-        con.add(winLabel, BorderLayout.CENTER);
+        con.add(winLabel);
 
         // Back to Menu
-        con.add(returnToMenu, BorderLayout.SOUTH);
+        con.add(returnToMenu);
 
         invalidate();
         validate();
@@ -503,7 +503,7 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
         refreshGameGUI(option);
     }
 
-    private void refreshGameGUI(String option)  {
+    public void refreshGameGUI(String option)  {
         // refreshes the Game GUI without starting a new Game and initialising labels
         con.removeAll();
         con.setLayout(new GridLayout(3, 4, 5, 5));
@@ -589,14 +589,6 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
         }
     }
 
-    public void requestCategory()  {
-        refreshGameGUI("Category");
-    }
-
-    public int getCategoryIndex()  {
-        return currentCategoryIndex;
-    }
-
     private void blankSpace(String option)  {
         switch (option) {
             case "Blank":
@@ -619,13 +611,14 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
         }
     }
 
-    public void YesNoOption()  {
-        refreshGameGUI("YesNo");
-    }
-
     public void playerNewRound()  {
         newRound = true;
-        requestCategory();
+        if (!(newGame.lastCard instanceof TrumpCard)) {
+            refreshGameGUI("Category");
+        } else {
+            selected = true;                            // Category determined by the trump card which was played
+            refreshGameGUI("Blank");
+        }
     }
 
     public void aiNewRound()  {

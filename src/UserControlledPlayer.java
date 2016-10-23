@@ -64,7 +64,9 @@ public class UserControlledPlayer extends Player {
 
     public void newRound()  {
         /*User decision: choose a play category and play any card as indicated in hand or pass */
-        SuperTrumpGUI.message("Choose a play category");
+        if (!(SuperTrumpGUI.newGame.lastCard instanceof TrumpCard)) {
+            SuperTrumpGUI.message("Choose a play category");
+        }
         SuperTrumpGUI.window.playerNewRound();
     }
 
@@ -111,7 +113,7 @@ public class UserControlledPlayer extends Player {
     }
 
     public void chooseCategory() {
-        SuperTrumpGUI.window.requestCategory();
+        SuperTrumpGUI.window.refreshGameGUI("Category");
     }
 //        // Determine play category from user input
 //        boolean confirm = false;
