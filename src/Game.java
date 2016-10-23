@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
-import java.util.Scanner;
 
 /**
  * Created by Hadassah Harland on 21/09/2016.
@@ -25,7 +24,7 @@ public class Game {
 
     public Game(String[] playerNames) {
         startGame(playerNames);
-        playGame();
+        //playGame();
     }
 
     public void startGame(String[] playerNames)  {
@@ -47,7 +46,7 @@ public class Game {
     }
 
     public void endGame()  {
-        SuperTrumpGUI.Message("The game has ended.");
+        SuperTrumpGUI.message("The game has ended.");
         pronounceWinners();
 
     }
@@ -56,7 +55,7 @@ public class Game {
         // generate a random integer corresponding to a player index
         Random rn = new Random();
         int dealerIndex = rn.nextInt(players.length);
-        SuperTrumpGUI.Message("The dealer is " + players[dealerIndex].getPlayerName());
+        SuperTrumpGUI.message("The dealer is " + players[dealerIndex].getPlayerName());
         this.currentPlayerIndex = dealerIndex;
     }
 
@@ -105,6 +104,10 @@ public class Game {
         return players[playerIndex].hand;
     }
 
+    public static Player[] getPlayers() {
+        return players;
+    }
+
     public Player getPlayer(int playerIndex)  {
         return players[playerIndex];
     }
@@ -121,7 +124,7 @@ public class Game {
             runnerUpStatement = ", the runner ups are " + winners[1] + ", " + winners[2] + " and "
                     + winners[3];
         }
-        SuperTrumpGUI.Message(winnerStatement + runnerUpStatement + loserStatement);
+        SuperTrumpGUI.message(winnerStatement + runnerUpStatement + loserStatement);
     }
 
     public void nextCurrentPlayer()  {
@@ -129,7 +132,7 @@ public class Game {
         // if the current player is
         while ((players[currentPlayerIndex].isPassed()) || (players[currentPlayerIndex].isWinner()))  {
             if (players[currentPlayerIndex].isPassed()) {
-                SuperTrumpGUI.Message(players[currentPlayerIndex].getPlayerName() + " has passed until the end of the round.");
+                SuperTrumpGUI.message(players[currentPlayerIndex].getPlayerName() + " has passed until the end of the round.");
             }
             currentPlayerIndex = ((currentPlayerIndex + 1)% players.length);
         }
@@ -138,12 +141,12 @@ public class Game {
     public void newRound() {
         roundNo++;
         // declare new round
-        SuperTrumpGUI.Message("New round: Round " + roundNo);
+        SuperTrumpGUI.message("New round: Round " + roundNo);
         // set all players passed status to false
         for (int i = 0; i < players.length; i++)  {  players[i].setPassed(false); }
-        SuperTrumpGUI.Message("It is " + players[currentPlayerIndex].getPlayerName() + "'s turn to start the round. ");
+        SuperTrumpGUI.message("It is " + players[currentPlayerIndex].getPlayerName() + "'s turn to start the round. ");
         this.currentCategoryIndex = players[currentPlayerIndex].newRound();
-        SuperTrumpGUI.Message(players[currentPlayerIndex].getPlayerName() + " has chosen the play category to be "
+        SuperTrumpGUI.message(players[currentPlayerIndex].getPlayerName() + " has chosen the play category to be "
                 + categories[currentCategoryIndex]);
         playCard(players[currentPlayerIndex].getInPlay());
         endOfTurn();
@@ -185,7 +188,7 @@ public class Game {
             currentCategory = "economic value";
             categoryValue = card.economicValue;
         }
-        SuperTrumpGUI.Message(players[currentPlayerIndex].getPlayerName() + " has played a card: \n" + card.name + ", "
+        SuperTrumpGUI.message(players[currentPlayerIndex].getPlayerName() + " has played a card: \n" + card.name + ", "
                 + currentCategory + ", " + categoryValue);
     }
 
@@ -203,7 +206,7 @@ public class Game {
             currentCategoryIndex = 1;
             /* If a player throws the Geophysicist card together with the Magnetite card, then that player wins */
             if (players[currentPlayerIndex].magnetiteWinCondition())  {
-                SuperTrumpGUI.Message(players[currentPlayerIndex].getPlayerName() + " has played the Geophysicist card " +
+                SuperTrumpGUI.message(players[currentPlayerIndex].getPlayerName() + " has played the Geophysicist card " +
                         "and the Magnetite card and so has won.");
                 checkWinners();
                 if (!endOfGame)  {
@@ -213,14 +216,14 @@ public class Game {
         } else if (card.cardIndex == 59)  {                             // the Geologist: Player to choose category
             currentCategoryIndex = players[currentPlayerIndex].chooseCategory();
         } else {
-            SuperTrumpGUI.Message("An error has occurred, this is not a Trump Card");
+            SuperTrumpGUI.message("An error has occurred, this is not a Trump Card");
         }
         // declare new round
         roundNo++;
-        SuperTrumpGUI.Message("A trump card was played! \nNew round: Round " + roundNo);
+        SuperTrumpGUI.message("A trump card was played! \nNew round: Round " + roundNo);
         // set all players passed status to false
         for (int i = 0; i < players.length; i++)  {  players[i].setPassed(false); }
-        SuperTrumpGUI.Message(players[currentPlayerIndex].getPlayerName() + " has played a card: \n"
+        SuperTrumpGUI.message(players[currentPlayerIndex].getPlayerName() + " has played a card: \n"
                 + card.toString() + "\nThe play category is now " + categories[currentCategoryIndex]);
         this.lastCard = card;
     }
@@ -231,7 +234,7 @@ public class Game {
             if ((players[i].hand.winCondition) && (!players[i].isWinner()))  {
                 // add to winners
                 winners[playersOut] = players[i].getPlayerName();
-                SuperTrumpGUI.Message(players[i].getPlayerName() + " has won");
+                SuperTrumpGUI.message(players[i].getPlayerName() + " has won");
                 players[i].setWinner(true);
                 playersOut++;
                 noPlayers--;
@@ -277,17 +280,13 @@ public class Game {
     }
 
     public void newTurn() {
-        SuperTrumpGUI.Message("It is now " + players[currentPlayerIndex].getPlayerName() + "'s turn ");
+        SuperTrumpGUI.message("It is now " + players[currentPlayerIndex].getPlayerName() + "'s turn ");
         players[currentPlayerIndex].takeTurn(lastCard, currentCategoryIndex);
         /* if the player has passed on this turn the boolean is true */
         if (players[currentPlayerIndex].isPassed()) {
-            SuperTrumpGUI.Message(players[currentPlayerIndex].getPlayerName() + " has passed and picked up a card from " +
+            SuperTrumpGUI.message(players[currentPlayerIndex].getPlayerName() + " has passed and picked up a card from " +
                     "the deck");
-            while (deck.playDeck.isEmpty())  {
-                SuperTrumpGUI.Message("The Deck has been reshuffled");
-                System.out.println(discardPile.size());
-                checkDeck();
-            }
+            checkDeck();
             Card card = deck.playDeck.get(0);                       // take the first card in the deck
             deck.playDeck.remove(card);                             // remove that card from the deck
             checkDeck();
@@ -301,8 +300,13 @@ public class Game {
     public void checkDeck()  {
         /* if the deck is empty, shuffle the discard pile into the deck */
         if (deck.playDeck.isEmpty())  {
+            SuperTrumpGUI.message("The Deck has been reshuffled");
             deck.playDeck = discardPile;
             Collections.shuffle(deck.playDeck);
+            if (deck.playDeck.isEmpty())  {
+                SuperTrumpGUI.message("No more Cards");
+                System.exit(1);
+            }
         }
     }
 }
