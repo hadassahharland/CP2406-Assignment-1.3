@@ -10,11 +10,12 @@ import java.awt.event.ActionListener;
 public class SuperTrumpGUI extends JFrame implements ActionListener {
     private static SuperTrumpGUI window;
     private static JButton start, quit, instruct, returnToMenu, nextImage, playersContinue, startGame, backToNoSelect;
-    private static JButton tempMenu, pass, viewHand;
-    private static JLabel instructImage, player2window, player3window, player4window, player5window;
+    private static JButton tempMenu, pass, viewHand, homeMenu, inGameInstruct, backtoGame;
+    private static JLabel instructImage, player2window, player3window, player4window, player5window, lastCardView, dialogue;
     private static JComboBox<Integer> noPlayersChoice;
     private static JTextField player1Name, player2Name, player3Name, player4Name, player5Name;
     private String[] playerNames;
+    private boolean isInGame;
     private int instructImageIndex;
     private static final Dimension DIM = new Dimension(900,640);
     private static final Font HEADING = new Font("Century",Font.BOLD, 22);
@@ -36,28 +37,47 @@ public class SuperTrumpGUI extends JFrame implements ActionListener {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(true);
         setVisible(true);
+
+        // Some standard buttons
+        returnToMenu = new JButton("Return to Home Menu");
+        returnToMenu.setFont(BUTTONS);
+        returnToMenu.addActionListener(this);
+        quit = new JButton("Quit");
+        quit.setFont(BUTTONS);
+        quit.addActionListener(this);
+        instruct = new JButton("View Instructions");
+        instruct.setFont(BUTTONS);
+        instruct.addActionListener(this);
+        backtoGame = new JButton("Return to Game");
+        backtoGame.setFont(BUTTONS);
+        backtoGame.addActionListener(this);
+
+        // Call Menu
         Menu();
     }
 
     private void Menu()  {
         con.removeAll();
         con.setLayout(new GridLayout(4,1,20,20));
+
+        // Welcome Label
         JLabel welcome = new JLabel("Welcome to Project Mineral: Super Trumps!");
         welcome.setFont(HEADING);
         welcome.setHorizontalAlignment(JLabel.CENTER);
         con.add(welcome);
+
+        // Start Button
         start = new JButton("Start Game");
         start.setFont(BUTTONS);
         start.addActionListener(this);
         con.add(start);
-        instruct = new JButton("View Instructions");
-        instruct.setFont(BUTTONS);
-        instruct.addActionListener(this);
+
+        // View Instructions Button
         con.add(instruct);
-        quit = new JButton("Quit");
-        quit.setFont(BUTTONS);
-        quit.addActionListener(this);
+
+        // Quit Button
         con.add(quit);
+
         invalidate();
         validate();
         repaint();
@@ -89,7 +109,8 @@ public class SuperTrumpGUI extends JFrame implements ActionListener {
         }
         if (source == startGame)  {
             SavePlayerNames();
-            GameGUI(playerNames);
+            isInGame = true;
+            CreateGameGUI();
         }
         if (source == tempMenu)  {
             TempMenu();
@@ -100,44 +121,66 @@ public class SuperTrumpGUI extends JFrame implements ActionListener {
         if (source == viewHand)  {
             ViewHand();
         }
+        if (source == backtoGame)  {
+            BackToGameGUI();
+        }
     }
 
-    public void GameGUI(String[] players) {
+    public void CreateGameGUI() {
         con.removeAll();
         con.setLayout(new GridLayout(3, 4, 5, 5));
 
-        newGame = new Game(players.length);
+        //newGame = new Game()
 
-        player2window = new JLabel(players[1] + " has " + "playerHand.length" + " cards");
+        // Display Player Hand details
+        player2window = new JLabel(playerNames[1] + " has " + "playerHand.length" + " cards");
         player2window.setFont(LABELS);
         con.add(player2window);
-        player3window = new JLabel(players[2] + " has " + "playerHand.length" + " cards");
+        player3window = new JLabel(playerNames[2] + " has " + "playerHand.length" + " cards");
         player3window.setFont(LABELS);
         con.add(player3window);
-        if (players.length > 3)  {
-            player4window = new JLabel(players[3] + " has " + "playerHand.length" + " cards");
+        if (playerNames.length > 3)  {
+            player4window = new JLabel(playerNames[3] + " has " + "playerHand.length" + " cards");
             player4window.setFont(LABELS);
             con.add(player4window);
-            if (players.length > 4)  {
-                player5window = new JLabel(players[4] + " has " + "playerHand.length" + " cards");
+            if (playerNames.length > 4)  {
+                player5window = new JLabel(playerNames[4] + " has " + "playerHand.length" + " cards");
                 player5window.setFont(LABELS);
                 con.add(player5window);
             }
         }
 
         // add appropriate number of blank labels to fill the grid
-        for (int i = players.length-1; i < 6; i++) {
+        for (int i = playerNames.length-1; i < 6; i++) {
             con.add(new JLabel());
         }
-        con.add(new JLabel("Last Card"));
-        con.add(new JLabel("Dialogue Box"));
-        con.add(new JButton("View Hand"));
-        con.add(new JButton("Pass"));
+
+        // Last Card Label
+        lastCardView = new JLabel("Last Card"); // TODO last Card view
+        con.add(lastCardView);
+
+        // Dialogue Box View
+        dialogue = new JLabel("Dialogue");      // TODO Dialogue
+        con.add(dialogue);
+
+        // View Hand Button
+        viewHand = new JButton("View Hand");
+        viewHand.setFont(BUTTONS);
+        viewHand.addActionListener(this);
+        con.add(viewHand);
+
+        // Pass button
+        pass = new JButton("Pass");
+        pass.setFont(BUTTONS);
+        pass.addActionListener(this);
+        con.add(pass);
+
         con.add(new JLabel());                  // blank Label
 
         // Temp Menu Button
         tempMenu = new JButton("Menu");
         tempMenu.setFont(BUTTONS);
+        tempMenu.addActionListener(this);
         con.add(tempMenu);
 
         invalidate();
@@ -147,7 +190,7 @@ public class SuperTrumpGUI extends JFrame implements ActionListener {
 
     private void RetrieveNoPlayers()  {
         con.removeAll();
-        con.setLayout(new GridLayout(10,1));
+        con.setLayout(new GridLayout(5,0));
 
         // Number of Players prompt
         JLabel playerNoPrompt = new JLabel("Select number of players from the list");
@@ -159,11 +202,16 @@ public class SuperTrumpGUI extends JFrame implements ActionListener {
         noPlayersChoice = new JComboBox<>(numbersArray);
         con.add(noPlayersChoice);
 
+        con.add(new JLabel());              // Blank Label
+
         // Continue Button
         playersContinue = new JButton("Continue");
         playersContinue.setFont(BUTTONS);
         playersContinue.addActionListener(this);
         con.add(playersContinue);
+
+        // Back to Menu
+        con.add(returnToMenu);
 
         invalidate();
         validate();
@@ -177,10 +225,12 @@ public class SuperTrumpGUI extends JFrame implements ActionListener {
         con.setLayout(new BorderLayout());
 
         // Return To Menu Button
-        returnToMenu = new JButton("Return to Menu");
-        returnToMenu.setFont(BUTTONS);
-        returnToMenu.addActionListener(this);
-        con.add(returnToMenu, BorderLayout.WEST);
+        if (isInGame)  {
+            tempMenu.setText("Return to Menu");
+            con.add(tempMenu, BorderLayout.WEST);
+        } else {
+            con.add(returnToMenu, BorderLayout.WEST);
+        }
 
         // Retrieve Instruction Image from file and Scale to Window
         ImageIcon icon = new ImageIcon("Images\\" + instructImageDetail[instructImageIndex]);
@@ -203,16 +253,21 @@ public class SuperTrumpGUI extends JFrame implements ActionListener {
         if (instructImageIndex >= instructImageDetail.length)  {
             // If this is the last image, return to Menu
             window.setResizable(true);
-            Menu();
-        }else {
+            if (isInGame)  {
+                TempMenu();
+            } else  {
+                Menu();
+            }
+        } else {
             // Retrieve Instruction Image from file and Scale to Window
             ImageIcon icon = new ImageIcon("Images\\" + instructImageDetail[instructImageIndex]);
             instructImage.setIcon(Scale(icon, 600, 700));
-
-            invalidate();
-            validate();
-            repaint();
         }
+
+        invalidate();
+        validate();
+        repaint();
+
     }
 
     private ImageIcon Scale(ImageIcon icon, int dim1, int dim2)  {
@@ -284,6 +339,77 @@ public class SuperTrumpGUI extends JFrame implements ActionListener {
     }
 
     private void TempMenu()  {
-        // TODO Temp Menu
+        con.removeAll();
+        con.setLayout(new GridLayout(4,1,20,20));
+
+        // Menu Title
+        JLabel tempMenuTitle = new JLabel("In-Game Menu");
+        tempMenuTitle.setFont(HEADING);
+        con.add(tempMenuTitle);
+
+        // Home Menu Button
+        con.add(returnToMenu);
+
+        // View Instructions Button
+        con.add(instruct);
+
+        // Return to Game Button
+        con.add(backtoGame);
+
+        invalidate();
+        validate();
+        repaint();
+    }
+
+    private void BackToGameGUI()  {
+        // refreshes the Game GUI without starting a new Game and initialising labels
+        con.removeAll();
+        con.setLayout(new GridLayout(3, 4, 5, 5));
+
+        // Update Player Hand details
+        player2window.setText("Updated text");
+        con.add(player2window);
+        player3window.setText("Updated text");
+        con.add(player3window);
+        if (playerNames.length > 3)  {
+            player4window.setText("Updated text");
+            con.add(player4window);
+            if (playerNames.length > 4)  {
+                player5window.setText("Updated text");
+                con.add(player5window);
+            }
+        }
+
+        // add appropriate number of blank labels to fill the grid
+        for (int i = playerNames.length-1; i < 6; i++) {
+            con.add(new JLabel());
+        }
+
+        // Last Card Label
+        lastCardView.setText("Last Card");      // TODO last Card view
+        con.add(lastCardView);
+
+        // Dialogue Box View
+        dialogue.setText("Dialogue");           // TODO Dialogue
+        con.add(dialogue);
+
+        // View Hand Button
+        con.add(viewHand);
+
+        // Pass button
+        con.add(pass);
+
+        con.add(new JLabel());                  // blank Label
+
+        // Temp Menu Button
+        con.add(tempMenu);
+
+        invalidate();
+        validate();
+        repaint();
+
+
+
+
     }
 }
