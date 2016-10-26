@@ -142,7 +142,8 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
             tempMenu();
         }
         if (source == pass)  {
-            Game.players[0].setPassed(true);
+            message(newGame.players[0].getPlayerName() + " has passed and picked up a card.");
+            newGame.players[0].setPassed(true);
             turnHad = true;
             if (newRound && selected)  {
                 continueNewRound();
@@ -163,12 +164,15 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
             yesSelection = false;
         }
         if (source == select)  {
+            message("You have chosen the play category to be " + chooseCategory.getSelectedItem());
             Game.setCurrentCategoryIndex(chooseCategory.getSelectedIndex());
             newGame.players[0].categoryChoice = chooseCategory.getSelectedIndex();
             selected = true;
             System.out.println("Selected!");
             if (turnHad)  {
                 continueNewRound();
+            } else {
+                refreshGameGUI("Category");
             }
         }
     }
@@ -611,14 +615,15 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
         }
     }
 
-    public void playerNewRound()  {
+    public void playerNewRound(String option)  {
         newRound = true;
-        if (!(newGame.lastCard instanceof TrumpCard)) {
-            refreshGameGUI("Category");
-        } else {
-            selected = true;                            // Category determined by the trump card which was played
-            refreshGameGUI("Blank");
-        }
+        refreshGameGUI(option);
+//        if (!(newGame.lastCard instanceof TrumpCard)) {
+//            refreshGameGUI("Category");
+//        } else {
+//            selected = true;                            // Category determined by the trump card which was played
+//            refreshGameGUI("Blank");
+//        }
     }
 
     public void aiNewRound()  {
