@@ -36,8 +36,6 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
     private static final Font BUTTONS = HEADING.deriveFont(12);
     private static final Font LABELS = HEADING.deriveFont(Font.PLAIN,12);
     private Container con = getContentPane();
-    // TODO better way to do Instruct Images
-    private String[] instructImageDetail = {"Slide61.jpg","Slide62.jpg","Slide63.jpg","Slide64.jpg"};
 
     public static void main(String[] args) {
         window = new SuperTrumpGUI();
@@ -333,7 +331,7 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
         }
 
         // Retrieve Instruction Image from file and scale to Window
-        ImageIcon icon = new ImageIcon("Images\\" + instructImageDetail[instructImageIndex]);
+        ImageIcon icon = new ImageIcon("Images\\Slide6" + (instructImageIndex+1) + ".jpg");
         instructImage = new JLabel(scale(icon, 600, 700));
         con.add(instructImage, BorderLayout.CENTER);
 
@@ -350,7 +348,7 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
 
     private void refreshInstructions()  {
         instructImageIndex++;
-        if (instructImageIndex >= instructImageDetail.length)  {
+        if (instructImageIndex >= 4)  {
             // If this is the last image, return to menu
             window.setResizable(true);
             if (isInGame)  {
@@ -360,7 +358,7 @@ public class SuperTrumpGUI extends JFrame implements ActionListener, MouseListen
             }
         } else {
             // Retrieve Instruction Image from file and scale to Window
-            ImageIcon icon = new ImageIcon("Images\\" + instructImageDetail[instructImageIndex]);
+            ImageIcon icon = new ImageIcon("Images\\Slide6" + (instructImageIndex+1) + ".jpg");
             instructImage.setIcon(scale(icon, 600, 700));
         }
 
