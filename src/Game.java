@@ -269,7 +269,7 @@ public class Game {
         }
     }
 
-    public void checkPassed()  {
+    public boolean checkPassed()  {
         // determine how many players have not passed
         int playersIn = players.length;
         Player nextPlayer = null;
@@ -282,17 +282,20 @@ public class Game {
             /* New round is started by the player who had not passed */
             currentPlayerIndex = nextPlayer.playerIndex;
             if (!endOfGame) {
-                newRound();
+                //newRound();
+                return true;
             }
         }
+        return false;
     }
 
     public void endOfTurn()  {
         checkWinners();
-        checkPassed();
-        nextCurrentPlayer();
-        if (!endOfGame)  {
+        if (!checkPassed() && !endOfGame)  {
+            nextCurrentPlayer();
             newTurn();
+        } else if (checkPassed())  {
+            newRound();
         }
     }
 
